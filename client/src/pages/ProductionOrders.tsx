@@ -8,7 +8,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import { ProductionOrder, OrderStatus } from '../types';
+import type { ProductionOrder, OrderStatus } from '../types';
 
 export const ProductionOrdersPage: React.FC = () => {
   const dummyOrders: ProductionOrder[] = [

@@ -9,7 +9,7 @@ import {
   Filter,
   Boxes
 } from 'lucide-react';
-import { InventoryItem } from '../types';
+import type{ InventoryItem } from '../types';
 
 export const InventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');

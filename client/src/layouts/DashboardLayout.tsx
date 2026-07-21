@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   PackageCheck
 } from 'lucide-react';
-import { User } from '../types';
+import type { User } from '../types';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

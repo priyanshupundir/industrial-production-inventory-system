@@ -7,7 +7,7 @@ import {
   Plus, 
   QrCode 
 } from 'lucide-react';
-import { QualityInspection } from '../types';
+import type { QualityInspection } from '../types';
 
 export const QualityInspectionPage: React.FC = () => {
   const dummyInspections: QualityInspection[] = [

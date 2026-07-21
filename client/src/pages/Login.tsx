@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Factory, ShieldCheck, UserCheck, ArrowRight } from 'lucide-react';
-import { Role, User } from '../types';
+import type { Role, User } from '../types';
 
 interface LoginPageProps {
   onLoginSuccess: (user: User, token: string) => void;
