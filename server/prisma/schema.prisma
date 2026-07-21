@@ -1,0 +1,285 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  PRODUCTION_MANAGER
+  STORE_OFFICER
+  QUALITY_INSPECTOR
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  IN_PROGRESS
+  INSPECTION
+  COMPLETED
+  CANCELLED
+}
+
+enum InspectionStatus {
+  PASS
+  REWORK
+  REJECT
+}
+
+enum MachineStatus {
+  OPERATIONAL
+  MAINTENANCE_DUE
+  UNDER_REPAIR
+  OFFLINE
+}
+
+enum TransactionType {
+  STOCK_IN
+  STOCK_OUT
+  ADJUSTMENT
+}
+
+enum InventoryCategory {
+  RAW_MATERIAL
+  COMPONENT
+  FINISHED_GOOD
+  SPARE_PART
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// 1. Users
+model User {
+  id               String               @id @default(uuid())
+  email            String               @unique
+  name             String
+  passwordHash     String
+  role             Role                 @default(STORE_OFFICER)
+  departmentId     String?
+  department       Department?          @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  
+  transactions     InventoryTransaction[]
+  assignedSteps    ProductionStep[]
+  inspections      QualityInspection[]
+  maintenanceLogs  MaintenanceLog[]
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+// 2. Departments
+model Department {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  code        String       @unique
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  users       User[]
+  machines    Machine[]
+
+  @@map("departments")
+}
+
+// 3. Machines
+model Machine {
+  id             String          @id @default(uuid())
+  machineId      String          @unique
+  name           String
+  modelNumber    String?
+  status         MachineStatus   @default(OPERATIONAL)
+  maintenanceDue DateTime?
+  departmentId   String
+  department     Department      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  orders          ProductionOrder[]
+  maintenanceLogs MaintenanceLog[]
+
+  @@map("machines")
+}
+
+// 4. Inventory
+model Inventory {
+  id           String            @id @default(uuid())
+  itemCode     String            @unique
+  name         String
+  category     InventoryCategory
+  quantity     Float             @default(0)
+  unit         String            // e.g. kg, meters, units
+  minThreshold Float             @default(10)
+  batchNumber  String
+  qrCode       String?           @unique
+  location     String            // e.g. Warehouse A, Bin 12
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  transactions InventoryTransaction[]
+
+  @@map("inventories")
+}
+
+// 5. Inventory Transactions
+model InventoryTransaction {
+  id             String          @id @default(uuid())
+  inventoryId    String
+  inventory      Inventory       @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  type           TransactionType
+  quantity       Float
+  referenceOrder String?         // e.g. PO-1002 or PRD-4001
+  notes          String?
+  performedById  String
+  performedBy    User            @relation(fields: [performedById], references: [id])
+  createdAt      DateTime        @default(now())
+
+  @@map("inventory_transactions")
+}
+
+// 6. Suppliers
+model Supplier {
+  id           String          @id @default(uuid())
+  name         String
+  code         String          @unique
+  contactEmail String
+  phone        String?
+  address      String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+// 7. Purchase Orders
+model PurchaseOrder {
+  id           String      @id @default(uuid())
+  poNumber     String      @unique
+  supplierId   String
+  supplier     Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  status       String      @default("PENDING") // PENDING, ORDERED, RECEIVED, CANCELLED
+  totalAmount  Float       @default(0)
+  itemsJson    String      // JSON string of item list
+  expectedDate DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("purchase_orders")
+}
+
+// 8. Production Orders
+model ProductionOrder {
+  id                String              @id @default(uuid())
+  orderNumber       String              @unique
+  productName       String
+  targetQuantity    Int
+  completedQuantity Int                 @default(0)
+  status            OrderStatus         @default(PENDING)
+  priority          Priority            @default(MEDIUM)
+  machineId         String?
+  machine           Machine?            @relation(fields: [machineId], references: [id], onDelete: SetNull)
+  startDate         DateTime?
+  dueDate           DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  steps             ProductionStep[]
+  inspections       QualityInspection[]
+
+  @@map("production_orders")
+}
+
+// 9. Production Steps
+model ProductionStep {
+  id                String          @id @default(uuid())
+  productionOrderId String
+  productionOrder   ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  stepNumber        Int
+  name              String
+  description       String?
+  status            String          @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  assignedOperatorId String?
+  assignedOperator  User?           @relation(fields: [assignedOperatorId], references: [id], onDelete: SetNull)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("production_steps")
+}
+
+// 10. Quality Inspections
+model QualityInspection {
+  id                String           @id @default(uuid())
+  inspectionCode    String           @unique
+  productionOrderId String
+  productionOrder   ProductionOrder  @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  batchNumber       String
+  inspectedById     String
+  inspectedBy       User             @relation(fields: [inspectedById], references: [id])
+  sampleSize        Int
+  passedQty         Int
+  reworkQty         Int              @default(0)
+  rejectedQty       Int              @default(0)
+  status            InspectionStatus
+  notes             String?
+  createdAt         DateTime         @default(now())
+
+  @@map("quality_inspections")
+}
+
+// 11. Maintenance Logs
+model MaintenanceLog {
+  id               String        @id @default(uuid())
+  machineId        String
+  machine          Machine       @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  performedById    String
+  performedBy      User          @relation(fields: [performedById], references: [id])
+  issueDescription String
+  actionTaken      String?
+  cost             Float         @default(0)
+  status           String        @default("COMPLETED")
+  logDate          DateTime      @default(now())
+
+  @@map("maintenance_logs")
+}
+
+// 12. Notifications
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, WARNING, ERROR, SUCCESS
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+// 13. Audit Logs
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String   // e.g. CREATE_PRODUCTION_ORDER, UPDATE_STOCK
+  entity    String   // e.g. Inventory, ProductionOrder
+  entityId  String
+  metadata  String?  // JSON string detailing changes
+  timestamp DateTime @default(now())
+
+  @@map("audit_logs")
+}
