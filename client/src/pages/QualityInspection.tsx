@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ClipboardCheck, 
   CheckCircle2, 
   RefreshCw, 
   XCircle, 
   Plus, 
-  QrCode 
+  QrCode,
+  X,
+  Download
 } from 'lucide-react';
 import type { QualityInspection } from '../types';
+import { exportToCSV } from '../lib/exportUtils';
 
 export const QualityInspectionPage: React.FC = () => {
-  const dummyInspections: QualityInspection[] = [
+  const [inspections, setInspections] = useState<QualityInspection[]>([
     {
       id: '1',
       inspectionCode: 'QC-2026-044',
@@ -35,7 +38,63 @@ export const QualityInspectionPage: React.FC = () => {
       notes: 'Surface roughness exceeded tolerance on lathe turn. Sent 8 units back for secondary machining.',
       createdAt: '2026-07-20 11:15'
     }
-  ];
+  ]);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [batchNumber, setBatchNumber] = useState('BATCH-2026-08A');
+  const [sampleSize, setSampleSize] = useState(50);
+  const [passedQty, setPassedQty] = useState(48);
+  const [reworkQty, setReworkQty] = useState(1);
+  const [rejectedQty, setRejectedQty] = useState(1);
+  const [status, setStatus] = useState<'PASS' | 'REWORK' | 'REJECT'>('PASS');
+  const [notes, setNotes] = useState('');
+
+  const handleAddInspection = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newReport: QualityInspection = {
+      id: Date.now().toString(),
+      inspectionCode: `QC-2026-0${Math.floor(45 + inspections.length)}`,
+      batchNumber,
+      sampleSize: Number(sampleSize),
+      passedQty: Number(passedQty),
+      reworkQty: Number(reworkQty),
+      rejectedQty: Number(rejectedQty),
+      status,
+      notes: notes || 'Inspection completed according to ISO 9001 compliance standards.',
+      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
+    };
+
+    setInspections([newReport, ...inspections]);
+    setIsModalOpen(false);
+    setNotes('');
+  };
+
+  const handleExportCSV = () => {
+    exportToCSV(
+      inspections,
+      `quality_inspection_report_${new Date().toISOString().substring(0, 10)}`,
+      {
+        inspectionCode: 'Inspection Code',
+        batchNumber: 'Batch Number',
+        sampleSize: 'Sample Size',
+        passedQty: 'Passed Qty',
+        reworkQty: 'Rework Qty',
+        rejectedQty: 'Rejected Qty',
+        status: 'Status',
+        notes: 'Inspector Notes',
+        createdAt: 'Timestamp'
+      }
+    );
+  };
+
+  // Recalculate KPIs
+  const totalPassed = inspections.reduce((acc, i) => acc + i.passedQty, 0);
+  const totalSample = inspections.reduce((acc, i) => acc + i.sampleSize, 0);
+  const passRate = totalSample > 0 ? ((totalPassed / totalSample) * 100).toFixed(1) : '100';
+  const totalRework = inspections.reduce((acc, i) => acc + i.reworkQty, 0);
+  const totalRejected = inspections.reduce((acc, i) => acc + i.rejectedQty, 0);
 
   return (
     <div className="space-y-6">
@@ -45,10 +104,22 @@ export const QualityInspectionPage: React.FC = () => {
           <p className="text-sm text-slate-400">Record sample inspections, defect rates, rework directives, and pass certificates.</p>
         </div>
 
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all">
-          <Plus className="h-4 w-4" />
-          Log Inspection Report
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm border border-slate-700 transition-all cursor-pointer"
+          >
+            <Download className="h-4 w-4 text-emerald-400" />
+            Export Quality Report
+          </button>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            Log Inspection Report
+          </button>
+        </div>
       </div>
 
       {/* Summary KPI Widgets */}
@@ -59,7 +130,7 @@ export const QualityInspectionPage: React.FC = () => {
           </div>
           <div>
             <span className="text-xs text-slate-400 font-semibold uppercase">Overall Quality Pass Rate</span>
-            <div className="text-2xl font-extrabold text-white">96.8%</div>
+            <div className="text-2xl font-extrabold text-white">{passRate}%</div>
           </div>
         </div>
 
@@ -69,7 +140,7 @@ export const QualityInspectionPage: React.FC = () => {
           </div>
           <div>
             <span className="text-xs text-slate-400 font-semibold uppercase">Units Sent for Rework</span>
-            <div className="text-2xl font-extrabold text-white">10 Units</div>
+            <div className="text-2xl font-extrabold text-white">{totalRework} Units</div>
           </div>
         </div>
 
@@ -79,7 +150,7 @@ export const QualityInspectionPage: React.FC = () => {
           </div>
           <div>
             <span className="text-xs text-slate-400 font-semibold uppercase">Rejected Scrap Units</span>
-            <div className="text-2xl font-extrabold text-white">5 Units</div>
+            <div className="text-2xl font-extrabold text-white">{totalRejected} Units</div>
           </div>
         </div>
       </div>
@@ -87,10 +158,10 @@ export const QualityInspectionPage: React.FC = () => {
       {/* Inspection Log Table */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
         <div className="p-4 border-b border-slate-800 font-semibold text-slate-200 text-sm">
-          Recent Quality Inspection Reports
+          Recent Quality Inspection Reports ({inspections.length})
         </div>
         <div className="divide-y divide-slate-800">
-          {dummyInspections.map((qc) => (
+          {inspections.map((qc) => (
             <div key={qc.id} className="p-5 hover:bg-slate-800/40 transition-colors space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
@@ -124,6 +195,116 @@ export const QualityInspectionPage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* MODAL: LOG INSPECTION REPORT */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <ClipboardCheck className="h-5 w-5 text-blue-400" />
+                Log Quality Inspection Report
+              </h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-200">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddInspection} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Batch Number</label>
+                  <input
+                    type="text"
+                    value={batchNumber}
+                    onChange={(e) => setBatchNumber(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Inspection Result</label>
+                  <select
+                    value={status}
+                    onChange={(e: any) => setStatus(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="PASS">Pass Certificate</option>
+                    <option value="REWORK">Rework Directed</option>
+                    <option value="REJECT">Rejected Scrap</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Sample Size</label>
+                  <input
+                    type="number"
+                    value={sampleSize}
+                    onChange={(e) => setSampleSize(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Passed Qty</label>
+                  <input
+                    type="number"
+                    value={passedQty}
+                    onChange={(e) => setPassedQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Rework Qty</label>
+                  <input
+                    type="number"
+                    value={reworkQty}
+                    onChange={(e) => setReworkQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Rejected Qty</label>
+                  <input
+                    type="number"
+                    value={rejectedQty}
+                    onChange={(e) => setRejectedQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-slate-300 block mb-1">Inspector Notes & Tolerance Remarks</label>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Dimensions verified with digital calipers. All tolerances within +/- 0.05mm."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-lg shadow-blue-500/20"
+                >
+                  Log Quality Report
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

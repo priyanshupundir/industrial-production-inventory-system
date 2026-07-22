@@ -4,18 +4,20 @@ import {
   Plus, 
   AlertTriangle, 
   QrCode, 
-  Layers, 
   ArrowDownUp, 
   Filter,
-  Boxes
+  X,
+  PackagePlus,
+  Download
 } from 'lucide-react';
-import type{ InventoryItem } from '../types';
+import type { InventoryItem } from '../types';
+import { exportToCSV } from '../lib/exportUtils';
 
 export const InventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
 
-  const dummyItems: InventoryItem[] = [
+  const [items, setItems] = useState<InventoryItem[]>([
     {
       id: '1',
       itemCode: 'RM-STL-101',
@@ -68,9 +70,91 @@ export const InventoryPage: React.FC = () => {
       location: 'Dispatch Staging Area 01',
       updatedAt: '2026-07-21'
     }
-  ];
+  ]);
 
-  const filteredItems = dummyItems.filter(item => {
+  // Modal States
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+
+  // Form States for Add Entry
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemCode, setNewItemCode] = useState('');
+  const [newItemCategory, setNewItemCategory] = useState<'RAW_MATERIAL' | 'COMPONENT' | 'FINISHED_GOOD' | 'SPARE_PART'>('RAW_MATERIAL');
+  const [newItemQuantity, setNewItemQuantity] = useState(100);
+  const [newItemUnit, setNewItemUnit] = useState('units');
+  const [newItemMinThreshold, setNewItemMinThreshold] = useState(20);
+  const [newItemBatchNumber, setNewItemBatchNumber] = useState('');
+  const [newItemLocation, setNewItemLocation] = useState('Warehouse Bay A');
+
+  // Form States for Adjust Stock
+  const [adjustType, setAdjustType] = useState<'STOCK_IN' | 'STOCK_OUT'>('STOCK_IN');
+  const [adjustQty, setAdjustQty] = useState(10);
+
+  const handleAddItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newItemName || !newItemCode) return;
+
+    const generatedBatch = newItemBatchNumber || `BATCH-2026-${Math.floor(100 + Math.random() * 900)}`;
+    const newItem: InventoryItem = {
+      id: Date.now().toString(),
+      itemCode: newItemCode.toUpperCase(),
+      name: newItemName,
+      category: newItemCategory,
+      quantity: Number(newItemQuantity),
+      unit: newItemUnit,
+      minThreshold: Number(newItemMinThreshold),
+      batchNumber: generatedBatch,
+      qrCode: `QR-${newItemCode.toUpperCase()}-01`,
+      location: newItemLocation,
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
+
+    setItems([newItem, ...items]);
+    setIsAddModalOpen(false);
+
+    setNewItemName('');
+    setNewItemCode('');
+    setNewItemBatchNumber('');
+  };
+
+  const handleAdjustStock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedItem) return;
+
+    const updated = items.map(item => {
+      if (item.id === selectedItem.id) {
+        const newQty = adjustType === 'STOCK_IN' 
+          ? item.quantity + Number(adjustQty) 
+          : Math.max(0, item.quantity - Number(adjustQty));
+        return { ...item, quantity: newQty, updatedAt: new Date().toISOString().split('T')[0] };
+      }
+      return item;
+    });
+
+    setItems(updated);
+    setIsAdjustModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleExportCSV = () => {
+    exportToCSV(
+      items,
+      `inventory_stock_report_${new Date().toISOString().substring(0, 10)}`,
+      {
+        itemCode: 'Item Code',
+        name: 'Material Name',
+        category: 'Category',
+        quantity: 'Current Quantity',
+        unit: 'Unit',
+        minThreshold: 'Min Threshold',
+        batchNumber: 'Batch Number',
+        location: 'Warehouse Location'
+      }
+    );
+  };
+
+  const filteredItems = items.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           item.batchNumber.toLowerCase().includes(searchTerm.toLowerCase());
@@ -86,10 +170,22 @@ export const InventoryPage: React.FC = () => {
           <p className="text-sm text-slate-400">Track raw materials, component stocks, finished goods, and batch numbers.</p>
         </div>
 
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all">
-          <Plus className="h-4 w-4" />
-          Add Material Entry
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm border border-slate-700 transition-all cursor-pointer"
+          >
+            <Download className="h-4 w-4 text-emerald-400" />
+            Export CSV
+          </button>
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            Add Material Entry
+          </button>
+        </div>
       </div>
 
       {/* Filters & Controls */}
@@ -168,7 +264,13 @@ export const InventoryPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 text-xs text-slate-400">{item.location}</td>
                     <td className="px-6 py-4 text-right">
-                      <button className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-all inline-flex items-center gap-1">
+                      <button 
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setIsAdjustModalOpen(true);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-all inline-flex items-center gap-1 cursor-pointer"
+                      >
                         <ArrowDownUp className="h-3.5 w-3.5" /> Adjust Stock
                       </button>
                     </td>
@@ -179,6 +281,228 @@ export const InventoryPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* MODAL 1: ADD MATERIAL ENTRY */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <PackagePlus className="h-5 w-5 text-blue-400" />
+                Add New Material Entry
+              </h3>
+              <button 
+                onClick={() => setIsAddModalOpen(false)}
+                className="text-slate-400 hover:text-slate-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddItem} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Item Code *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. RM-STL-300"
+                    value={newItemCode}
+                    onChange={(e) => setNewItemCode(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Category</label>
+                  <select
+                    value={newItemCategory}
+                    onChange={(e: any) => setNewItemCategory(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="RAW_MATERIAL">Raw Material</option>
+                    <option value="COMPONENT">Component</option>
+                    <option value="FINISHED_GOOD">Finished Good</option>
+                    <option value="SPARE_PART">Spare Part</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-slate-300 block mb-1">Material Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Stainless Steel Alloy Tubing 12mm"
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Initial Qty</label>
+                  <input
+                    type="number"
+                    value={newItemQuantity}
+                    onChange={(e) => setNewItemQuantity(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Unit</label>
+                  <input
+                    type="text"
+                    value={newItemUnit}
+                    onChange={(e) => setNewItemUnit(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Min Threshold</label>
+                  <input
+                    type="number"
+                    value={newItemMinThreshold}
+                    onChange={(e) => setNewItemMinThreshold(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Batch Number</label>
+                  <input
+                    type="text"
+                    placeholder="BATCH-2026-99 (Auto if empty)"
+                    value={newItemBatchNumber}
+                    onChange={(e) => setNewItemBatchNumber(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-300 block mb-1">Warehouse Location</label>
+                  <input
+                    type="text"
+                    value={newItemLocation}
+                    onChange={(e) => setNewItemLocation(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-lg shadow-blue-500/20"
+                >
+                  Save Material Entry
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: ADJUST STOCK */}
+      {isAdjustModalOpen && selectedItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-white">Adjust Stock Level</h3>
+                <p className="text-xs text-blue-400 font-mono mt-0.5">{selectedItem.name} ({selectedItem.itemCode})</p>
+              </div>
+              <button 
+                onClick={() => setIsAdjustModalOpen(false)}
+                className="text-slate-400 hover:text-slate-200"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAdjustStock} className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-slate-300 block mb-1">Adjustment Type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAdjustType('STOCK_IN')}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold border ${
+                      adjustType === 'STOCK_IN' 
+                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' 
+                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                    }`}
+                  >
+                    + Stock Receive (IN)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAdjustType('STOCK_OUT')}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold border ${
+                      adjustType === 'STOCK_OUT' 
+                        ? 'bg-red-500/20 text-red-400 border-red-500/40' 
+                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                    }`}
+                  >
+                    - Stock Issue (OUT)
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-slate-300 block mb-1">Quantity ({selectedItem.unit})</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={adjustQty}
+                  onChange={(e) => setAdjustQty(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-xs space-y-1 text-slate-400">
+                <div className="flex justify-between">
+                  <span>Current Stock:</span>
+                  <span className="font-bold text-white">{selectedItem.quantity} {selectedItem.unit}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Projected New Stock:</span>
+                  <span className="font-bold text-blue-400">
+                    {adjustType === 'STOCK_IN' 
+                      ? selectedItem.quantity + Number(adjustQty)
+                      : Math.max(0, selectedItem.quantity - Number(adjustQty))} {selectedItem.unit}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAdjustModalOpen(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-lg shadow-blue-500/20"
+                >
+                  Confirm Adjustment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

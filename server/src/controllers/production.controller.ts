@@ -70,8 +70,12 @@ export const createProductionOrder = async (req: AuthenticatedRequest, res: Resp
 
 export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { status, completedQuantity } = req.body;
+
+    if (!id || Array.isArray(id)) {
+      return res.status(400).json({ error: 'Production order id is required' });
+    }
 
     if (!status || !Object.values(OrderStatus).includes(status)) {
       return res.status(400).json({ error: 'Valid OrderStatus is required' });

@@ -40,8 +40,12 @@ export const getInventoryItems = async (req: AuthenticatedRequest, res: Response
 
 export const updateStockQuantity = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { type, quantity, referenceOrder, notes } = req.body;
+
+    if (!id || Array.isArray(id)) {
+      return res.status(400).json({ error: 'Inventory item id is required' });
+    }
 
     if (!type || !quantity || quantity <= 0) {
       return res.status(400).json({ error: 'Valid transaction type and quantity are required' });
@@ -70,7 +74,7 @@ export const updateStockQuantity = async (req: AuthenticatedRequest, res: Respon
         data: { quantity: newQuantity }
       });
 
-      await tx.inventoryTransactions.create({
+      await tx.inventoryTransaction.create({
         data: {
           inventoryId: id,
           type: type as TransactionType,

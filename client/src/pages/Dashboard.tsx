@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { 
   Boxes, 
   Factory, 
@@ -6,8 +6,7 @@ import {
   AlertTriangle, 
   Cpu, 
   TrendingUp,
-  CheckCircle2,
-  Package
+  AlertCircle
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -22,31 +21,63 @@ import {
   Cell,
   Legend
 } from 'recharts';
+import { dashboardAPI } from '../api/services';
+import type { DashboardMetrics } from '../types';
+
+interface DashboardCharts {
+  monthlyProduction: Array<{ month: string; target: number; completed: number }>;
+  categoryDistribution: Array<{ name: string; count: number }>;
+}
+
+const categoryColors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
 
 export const DashboardPage: React.FC = () => {
-  const kpis = [
-    { title: 'Total Inventory Items', value: '513', change: '+12% this month', icon: Boxes, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
-    { title: 'Active Production Orders', value: '18', change: '4 Pending Quality', icon: Factory, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
-    { title: 'Pending Inspections', value: '6', change: '2 Urgent Priority', icon: ClipboardCheck, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
-    { title: 'Low Stock Alerts', value: '3', change: 'Requires Reorder', icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
-  ];
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [charts, setCharts] = useState<DashboardCharts | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const monthlyData = [
-    { month: 'Jan', Target: 120, Completed: 115 },
-    { month: 'Feb', Target: 140, Completed: 138 },
-    { month: 'Mar', Target: 160, Completed: 152 },
-    { month: 'Apr', Target: 180, Completed: 175 },
-    { month: 'May', Target: 200, Completed: 198 },
-    { month: 'Jun', Target: 220, Completed: 210 },
-    { month: 'Jul', Target: 250, Completed: 242 },
-  ];
+  useEffect(() => {
+    const loadDashboard = async () => {
+      setIsLoading(true);
+      setErrorMsg('');
 
-  const categoryData = [
-    { name: 'Raw Material', value: 45, color: '#3b82f6' },
-    { name: 'Components', value: 30, color: '#10b981' },
-    { name: 'Finished Goods', value: 15, color: '#f59e0b' },
-    { name: 'Spare Parts', value: 10, color: '#8b5cf6' },
-  ];
+      try {
+        const data = await dashboardAPI.getMetrics();
+        setMetrics(data.metrics);
+        setCharts(data.charts);
+      } catch (err: any) {
+        setErrorMsg(err.response?.data?.error || 'Unable to load dashboard metrics.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, []);
+
+  const kpis = useMemo(() => [
+    { title: 'Total Inventory Items', value: metrics?.totalInventoryItems ?? 0, change: `${metrics?.lowStockCount ?? 0} low stock alerts`, icon: Boxes, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+    { title: 'Active Production Orders', value: metrics?.activeOrders ?? 0, change: `${metrics?.totalOrders ?? 0} total orders`, icon: Factory, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
+    { title: 'Pending Inspections', value: metrics?.pendingInspections ?? 0, change: 'Awaiting quality review', icon: ClipboardCheck, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+    { title: 'Low Stock Alerts', value: metrics?.lowStockCount ?? 0, change: 'Requires reorder review', icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
+  ], [metrics]);
+
+  const monthlyData = useMemo(() => {
+    return (charts?.monthlyProduction ?? []).map(item => ({
+      month: item.month,
+      Target: item.target,
+      Completed: item.completed
+    }));
+  }, [charts]);
+
+  const categoryData = useMemo(() => {
+    return (charts?.categoryDistribution ?? []).map((item, index) => ({
+      name: item.name,
+      value: item.count,
+      color: categoryColors[index % categoryColors.length]
+    }));
+  }, [charts]);
 
   const activeMachines = [
     { id: 'MAC-CNC-01', name: '5-Axis CNC Milling Station A1', status: 'OPERATIONAL', load: '88%' },
@@ -62,6 +93,13 @@ export const DashboardPage: React.FC = () => {
         <p className="text-sm text-slate-400">Real-time inventory metrics, production throughput, and equipment telemetry.</p>
       </div>
 
+      {errorMsg && (
+        <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-sm text-red-300 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {errorMsg}
+        </div>
+      )}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => {
@@ -75,7 +113,7 @@ export const DashboardPage: React.FC = () => {
                 </div>
               </div>
               <div className="mt-3">
-                <span className="text-3xl font-extrabold text-white">{kpi.value}</span>
+                <span className="text-3xl font-extrabold text-white">{isLoading ? '--' : kpi.value}</span>
                 <p className="text-xs text-slate-400 mt-1">{kpi.change}</p>
               </div>
             </div>

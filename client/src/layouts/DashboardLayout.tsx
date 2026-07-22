@@ -10,7 +10,7 @@ import {
   User as UserIcon,
   Bell,
   ShieldCheck,
-  PackageCheck
+  Truck
 } from 'lucide-react';
 import type { User } from '../types';
 
@@ -30,6 +30,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
     { name: 'Production Orders', path: '/production', icon: Factory },
     { name: 'Quality Inspection', path: '/quality', icon: ClipboardCheck },
     { name: 'Machines & Maintenance', path: '/machines', icon: Cpu },
+    { name: 'Suppliers & Requisitions', path: '/suppliers', icon: Truck },
   ];
 
   const getRoleBadgeColor = (role?: string) => {

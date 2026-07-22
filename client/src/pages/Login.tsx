@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Factory, ShieldCheck, UserCheck, ArrowRight } from 'lucide-react';
+import { Factory, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 import type { Role, User } from '../types';
+import { authAPI } from '../api/services';
 
 interface LoginPageProps {
   onLoginSuccess: (user: User, token: string) => void;
@@ -9,6 +10,8 @@ interface LoginPageProps {
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('manager@industrial.com');
   const [password, setPassword] = useState('password123');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const demoAccounts = [
     { role: 'ADMIN' as Role, title: 'System Admin', email: 'admin@industrial.com', bg: 'hover:border-amber-500/50' },
@@ -17,27 +20,31 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     { role: 'QUALITY_INSPECTOR' as Role, title: 'Quality Inspector', email: 'inspector@industrial.com', bg: 'hover:border-purple-500/50' },
   ];
 
-  const handleQuickLogin = (demoEmail: string, role: Role) => {
-    const demoUser: User = {
-      id: 'demo-user-id',
-      name: demoAccounts.find(a => a.email === demoEmail)?.title || 'Demo User',
-      email: demoEmail,
-      role: role,
-      department: 'Operations'
-    };
-    onLoginSuccess(demoUser, 'demo-jwt-access-token');
+  const handleQuickLogin = async (demoEmail: string, role: Role) => {
+    setIsLoading(true);
+    setErrorMsg('');
+    try {
+      const data = await authAPI.login(demoEmail, 'password123');
+      onLoginSuccess(data.user, data.accessToken);
+    } catch (err) {
+      setErrorMsg('Unable to reach the login API. Start PostgreSQL and the backend server, then try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const demoUser: User = {
-      id: 'demo-user-id',
-      name: 'Ananya Roy (Production Manager)',
-      email: email,
-      role: 'PRODUCTION_MANAGER',
-      department: 'CNC & Precision Machining'
-    };
-    onLoginSuccess(demoUser, 'demo-jwt-access-token');
+    setIsLoading(true);
+    setErrorMsg('');
+    try {
+      const data = await authAPI.login(email, password);
+      onLoginSuccess(data.user, data.accessToken);
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.error || 'Unable to reach the login API. Start PostgreSQL and the backend server, then try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,6 +58,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <p className="text-xs text-slate-400">Industrial Production & Inventory Management System</p>
         </div>
 
+        {errorMsg && (
+          <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-xs text-red-400 flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {errorMsg}
+          </div>
+        )}
+
         {/* Demo Quick Selector */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 shadow-xl">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -60,8 +74,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {demoAccounts.map((acc) => (
               <button
                 key={acc.email}
+                disabled={isLoading}
                 onClick={() => handleQuickLogin(acc.email, acc.role)}
-                className={`p-3 rounded-lg bg-slate-950 border border-slate-800 text-left transition-all ${acc.bg} group`}
+                className={`p-3 rounded-lg bg-slate-950 border border-slate-800 text-left transition-all ${acc.bg} group cursor-pointer disabled:opacity-50`}
               >
                 <div className="text-xs font-bold text-slate-200 group-hover:text-blue-400 flex items-center justify-between">
                   {acc.title}
@@ -99,10 +114,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <ShieldCheck className="h-4 w-4" />
-            Authenticate Session
+            {isLoading ? 'Authenticating...' : 'Authenticate Session'}
           </button>
         </form>
       </div>
