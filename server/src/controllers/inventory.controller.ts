@@ -1,7 +1,73 @@
 import { Response } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, InventoryCategory } from '@prisma/client';
+
+export const createInventoryItem = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      itemCode,
+      name,
+      category,
+      quantity,
+      unit,
+      minThreshold,
+      batchNumber,
+      location
+    } = req.body;
+
+    // Validation
+    if (!itemCode || !name || !category || !quantity || !unit || !minThreshold || !location) {
+      return res.status(400).json({ error: 'All required fields must be provided' });
+    }
+
+    // Check if item code already exists
+    const existingItem = await prisma.inventory.findUnique({
+      where: { itemCode }
+    });
+
+    if (existingItem) {
+      return res.status(400).json({ error: 'Item code already exists' });
+    }
+
+    // Generate QR code
+    const qrCode = `${itemCode}|${batchNumber || 'N/A'}|${location}`;
+
+    // Create new inventory item
+    const newItem = await prisma.inventory.create({
+      data: {
+        itemCode: itemCode.toUpperCase(),
+        name,
+        category: category as InventoryCategory,
+        quantity: Number(quantity),
+        unit,
+        minThreshold: Number(minThreshold),
+        batchNumber: batchNumber || null,
+        qrCode,
+        location
+      }
+    });
+
+    // Create audit log
+    await prisma.auditLog.create({
+      data: {
+        userId: req.user!.userId,
+        action: 'CREATE_INVENTORY',
+        entity: 'Inventory',
+        entityId: newItem.id,
+        metadata: JSON.stringify({ itemCode: newItem.itemCode, name: newItem.name, quantity: newItem.quantity })
+      }
+    });
+
+    return res.status(201).json({
+      message: 'Inventory item created successfully',
+      item: newItem
+    });
+  } catch (error) {
+    console.error('Create inventory item error:', error);
+    return res.status(500).json({ error: 'Failed to create inventory item' });
+  }
+};
 
 export const getInventoryItems = async (req: AuthenticatedRequest, res: Response) => {
   try {
