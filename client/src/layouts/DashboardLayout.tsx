@@ -44,16 +44,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-gray-100 to-slate-200 text-slate-800 flex font-sans">
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0">
-        <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
+      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 shadow-lg">
+        <div className="p-6 border-b border-slate-200 flex items-center gap-3">
+          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30">
             <Factory className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-bold text-sm leading-tight text-white">INDUS-SYS</h1>
-            <p className="text-xs text-slate-400">Production & Inventory</p>
+            <h1 className="font-bold text-sm leading-tight text-slate-900">INDUS-SYS</h1>
+            <p className="text-xs text-slate-500">Production & Inventory</p>
           </div>
         </div>
 
@@ -67,11 +67,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
                 to={item.path}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md shadow-blue-500/20 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
+                <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
                 {item.name}
               </Link>
             );
@@ -79,14 +79,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
         </nav>
 
         {/* User Footer Profile */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
+        <div className="p-4 border-t border-slate-200 bg-slate-50/50 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 overflow-hidden">
-              <div className="h-9 w-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0">
-                <UserIcon className="h-4 w-4 text-slate-300" />
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 border border-blue-200 flex items-center justify-center shrink-0">
+                <UserIcon className="h-4 w-4 text-white" />
               </div>
               <div className="truncate">
-                <p className="text-xs font-semibold text-slate-200 truncate">{user?.name || 'Demo User'}</p>
+                <p className="text-xs font-semibold text-slate-900 truncate">{user?.name || 'Demo User'}</p>
                 <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded border uppercase mt-0.5 ${getRoleBadgeColor(user?.role)}`}>
                   {user?.role?.replace('_', ' ') || 'GUEST'}
                 </span>
@@ -95,7 +95,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
           </div>
           <button
             onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 text-xs font-medium border border-slate-700 hover:border-red-500/30 transition-all"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white hover:bg-red-50 text-slate-600 hover:text-red-600 text-xs font-medium border border-slate-200 hover:border-red-200 transition-all shadow-sm"
           >
             <LogOut className="h-3.5 w-3.5" />
             Sign Out
@@ -105,16 +105,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 flex items-center justify-between sticky top-0 z-10">
+        <header className="h-16 bg-white/80 backdrop-blur border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-10 shadow-sm">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-emerald-400" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <ShieldCheck className="h-5 w-5 text-emerald-500" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Manufacturing Security Protocol Active
             </span>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700">
+            <button className="relative p-2 rounded-lg bg-white text-slate-500 hover:text-slate-900 border border-slate-200 shadow-sm hover:shadow-md transition-all">
               <Bell className="h-4 w-4" />
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
             </button>

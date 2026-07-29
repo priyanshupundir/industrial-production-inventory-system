@@ -7,6 +7,11 @@ import authRoutes from './routes/auth.routes.js';
 import inventoryRoutes from './routes/inventory.routes.js';
 import productionRoutes from './routes/production.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
+import suppliersRoutes from './routes/suppliers.routes.js';
+import qualityRoutes from './routes/quality.routes.js';
+import machinesRoutes from './routes/machines.routes.js';
+import productionStepsRoutes from './routes/productionSteps.routes.js';
+import notificationsRoutes from './routes/notifications.routes.js';
 
 dotenv.config();
 
@@ -25,6 +30,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/suppliers', suppliersRoutes);
+app.use('/api/quality', qualityRoutes);
+app.use('/api/machines', machinesRoutes);
+app.use('/api/production-steps', productionStepsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Health Check Endpoint
 app.get('/api/health', async (req: Request, res: Response) => {
