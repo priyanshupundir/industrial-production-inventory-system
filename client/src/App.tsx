@@ -20,7 +20,13 @@ function App() {
       return null;
     }
 
-    return JSON.parse(saved);
+    try {
+      return JSON.parse(saved);
+    } catch {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      return null;
+    }
   });
 
   const handleLoginSuccess = (loggedUser: User, token: string) => {

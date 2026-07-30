@@ -251,7 +251,7 @@ export const DashboardPage: React.FC = () => {
                 <YAxis stroke="#64748b" fontSize={12} unit="%" domain={[0, 8]} />
                 <Tooltip
                   {...TOOLTIP_STYLE}
-                  formatter={(value: number) => [`${value}%`, 'Defect Rate']}
+                  formatter={(value: any) => [`${value}%`, 'Defect Rate']}
                 />
                 <Line
                   type="monotone"
@@ -296,7 +296,7 @@ export const DashboardPage: React.FC = () => {
                   fillOpacity={0.4}
                   strokeWidth={2}
                 />
-                <Tooltip {...TOOLTIP_STYLE} formatter={(v: number) => [`${v}%`, 'Utilization']} />
+                <Tooltip {...TOOLTIP_STYLE} formatter={(v: any) => [`${v}%`, 'Utilization']} />
                 <defs>
                   <linearGradient id="amberGradient" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="5%" stopColor="#f59e0b" stopOpacity={1}/>

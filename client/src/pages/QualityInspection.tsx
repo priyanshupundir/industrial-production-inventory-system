@@ -31,7 +31,7 @@ const inspectionSchema = z
     { message: 'Passed + Rework + Rejected cannot exceed Sample Size', path: ['passedQty'] },
   );
 
-type InspectionForm = z.infer<typeof inspectionSchema>;
+type InspectionForm = z.output<typeof inspectionSchema>;
 
 // ── Demo fallback data ────────────────────────────────────────────────────────
 const DEMO_INSPECTIONS: QualityInspection[] = [
@@ -72,7 +72,7 @@ export const QualityInspectionPage: React.FC = () => {
     formState: { errors },
     reset,
   } = useForm<InspectionForm>({
-    resolver: zodResolver(inspectionSchema),
+    resolver: zodResolver(inspectionSchema) as any,
     defaultValues: {
       batchNumber: 'BATCH-2026-08A',
       status: 'PASS',

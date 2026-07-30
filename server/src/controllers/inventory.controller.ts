@@ -17,7 +17,7 @@ export const createInventoryItem = async (req: AuthenticatedRequest, res: Respon
     } = req.body;
 
     // Validation
-    if (!itemCode || !name || !category || !quantity || !unit || !minThreshold || !location) {
+    if (!itemCode || !name || !category || quantity === undefined || quantity === null || !unit || minThreshold === undefined || minThreshold === null || !location) {
       return res.status(400).json({ error: 'All required fields must be provided' });
     }
 
@@ -42,7 +42,7 @@ export const createInventoryItem = async (req: AuthenticatedRequest, res: Respon
         quantity: Number(quantity),
         unit,
         minThreshold: Number(minThreshold),
-        batchNumber: batchNumber || null,
+        batchNumber: batchNumber || 'N/A',
         qrCode,
         location
       }

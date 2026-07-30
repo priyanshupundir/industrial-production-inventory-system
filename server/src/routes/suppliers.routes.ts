@@ -14,8 +14,8 @@ const router = Router();
 router.use(authenticateToken);
 
 // Supplier routes
-router.get('/suppliers', getSuppliers);
-router.post('/suppliers', createSupplier);
+router.get('/', getSuppliers);
+router.post('/', createSupplier);
 
 // Purchase Order routes
 router.get('/purchase-orders', getPurchaseOrders);

@@ -77,3 +77,81 @@ export const dashboardAPI = {
     return res.data;
   },
 };
+
+// ── Quality ───────────────────────────────────────────────────────────────────
+export const qualityAPI = {
+  getInspections: async () => {
+    const res = await api.get<{ count: number; inspections: any[] }>('/quality/inspections');
+    return res.data;
+  },
+  createInspection: async (data: {
+    productionOrderId: string;
+    batchNumber?: string;
+    sampleSize: number;
+    passedQty: number;
+    reworkQty: number;
+    rejectedQty: number;
+    status: string;
+    notes?: string;
+  }) => {
+    const res = await api.post<{ message: string; inspection: any }>('/quality/inspections', data);
+    return res.data;
+  },
+  getStats: async () => {
+    const res = await api.get<any>('/quality/inspections/stats');
+    return res.data;
+  },
+};
+
+// ── Machines ──────────────────────────────────────────────────────────────────
+export const machinesAPI = {
+  getMachines: async () => {
+    const res = await api.get<{ count: number; machines: any[] }>('/machines');
+    return res.data;
+  },
+  createMachine: async (data: any) => {
+    const res = await api.post<{ message: string; machine: any }>('/machines', data);
+    return res.data;
+  },
+  updateStatus: async (id: string, status: string) => {
+    const res = await api.patch<{ message: string; machine: any }>(`/machines/${id}/status`, { status });
+    return res.data;
+  },
+  getMaintenanceLogs: async () => {
+    const res = await api.get<{ count: number; logs: any[] }>('/machines/maintenance-logs');
+    return res.data;
+  },
+  createMaintenanceLog: async (data: {
+    machineId: string;
+    issueDescription: string;
+    actionTaken?: string;
+    cost?: number;
+  }) => {
+    const res = await api.post<{ message: string; log: any }>('/machines/maintenance-logs', data);
+    return res.data;
+  },
+};
+
+// ── Suppliers ─────────────────────────────────────────────────────────────────
+export const suppliersAPI = {
+  getSuppliers: async () => {
+    const res = await api.get<{ count: number; suppliers: any[] }>('/suppliers');
+    return res.data;
+  },
+  createSupplier: async (data: any) => {
+    const res = await api.post<{ message: string; supplier: any }>('/suppliers', data);
+    return res.data;
+  },
+  getPurchaseOrders: async () => {
+    const res = await api.get<{ count: number; purchaseOrders: any[] }>('/suppliers/purchase-orders');
+    return res.data;
+  },
+  createPurchaseOrder: async (data: any) => {
+    const res = await api.post<{ message: string; order: any }>('/suppliers/purchase-orders', data);
+    return res.data;
+  },
+  updatePurchaseOrderStatus: async (id: string, status: string) => {
+    const res = await api.patch<{ message: string; order: any }>(`/suppliers/purchase-orders/${id}/status`, { status });
+    return res.data;
+  },
+};

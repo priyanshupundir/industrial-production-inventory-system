@@ -15,10 +15,10 @@ const router = Router();
 router.use(authenticateToken);
 
 // Production Step routes
-router.get('/steps', getProductionSteps);
-router.post('/steps', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), createProductionStep);
-router.post('/steps/batch', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), createStepsForOrder);
-router.patch('/steps/:id', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), updateProductionStep);
-router.delete('/steps/:id', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), deleteProductionStep);
+router.get('/', getProductionSteps);
+router.post('/', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), createProductionStep);
+router.post('/batch', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), createStepsForOrder);
+router.patch('/:id', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), updateProductionStep);
+router.delete('/:id', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), deleteProductionStep);
 
 export default router;

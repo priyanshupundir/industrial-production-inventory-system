@@ -200,11 +200,13 @@ export const ProductionOrdersPage: React.FC = () => {
                   ) : (
                     colOrders.map((order) => {
                       const pct = Math.round((order.completedQuantity / order.targetQuantity) * 100);
-                      const progressColors = {
+                      const progressColors: Record<string, string> = {
                         PENDING: 'from-slate-500 to-slate-400',
+                        APPROVED: 'from-teal-500 to-teal-400',
                         IN_PROGRESS: 'from-blue-500 to-cyan-500',
                         INSPECTION: 'from-purple-500 to-pink-500',
                         COMPLETED: 'from-emerald-500 to-green-500',
+                        CANCELLED: 'from-red-500 to-red-400',
                       };
                       return (
                         <div

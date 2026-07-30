@@ -15,9 +15,9 @@ const router = Router();
 router.use(authenticateToken);
 
 // Machine routes
-router.get('/machines', getMachines);
-router.post('/machines', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), createMachine);
-router.patch('/machines/:id/status', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), updateMachineStatus);
+router.get('/', getMachines);
+router.post('/', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), createMachine);
+router.patch('/:id/status', requireRole([Role.ADMIN, Role.PRODUCTION_MANAGER]), updateMachineStatus);
 
 // Maintenance Log routes
 router.get('/maintenance-logs', getMaintenanceLogs);
