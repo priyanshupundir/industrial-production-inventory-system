@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Factory,
   BarChart3,
@@ -13,10 +13,51 @@ import {
   Settings,
   Clock,
   AlertTriangle,
+  X,
+  Mail,
+  Lock,
 } from 'lucide-react';
+import { authAPI } from '../api/services';
+import type { User } from '../types';
 
 export const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMsg('');
+
+    try {
+      const data = await authAPI.login(loginEmail, loginPassword);
+      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/');
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.error || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const demoAccounts = [
+    { email: 'admin@industrial.com', role: 'admin', title: 'Admin', bg: 'bg-gradient-to-r from-blue-500 to-cyan-500' },
+    { email: 'manager@industrial.com', role: 'manager', title: 'Manager', bg: 'bg-gradient-to-r from-emerald-500 to-green-500' },
+    { email: 'officer@industrial.com', role: 'officer', title: 'Store Officer', bg: 'bg-gradient-to-r from-purple-500 to-pink-500' },
+    { email: 'inspector@industrial.com', role: 'inspector', title: 'Inspector', bg: 'bg-gradient-to-r from-amber-500 to-orange-500' },
+  ];
+
+  const handleQuickLogin = (email: string) => {
+    setLoginEmail(email);
+    setLoginPassword('password123');
+    setIsLoginModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
@@ -34,12 +75,12 @@ export const LandingPage: React.FC = () => {
               <a href="#features" className="text-sm text-slate-600 hover:text-slate-900 transition-colors">Features</a>
               <a href="#about" className="text-sm text-slate-600 hover:text-slate-900 transition-colors">About</a>
               <a href="#contact" className="text-sm text-slate-600 hover:text-slate-900 transition-colors">Contact</a>
-              <Link
-                to="/login"
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
                 className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-medium shadow-lg shadow-blue-500/30 transition-all"
               >
                 Login
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -63,13 +104,13 @@ export const LandingPage: React.FC = () => {
               Comprehensive production tracking, inventory management, and quality control system designed for modern manufacturing facilities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/login"
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-medium shadow-xl shadow-blue-500/30 transition-all"
               >
                 Get Started
                 <ArrowRight className="h-5 w-5" />
-              </Link>
+              </button>
               <a
                 href="#features"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-medium shadow-md transition-all"
@@ -291,6 +332,104 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Login Modal */}
+      {isLoginModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Login to INDUS-SYS</h3>
+                <p className="text-xs text-slate-500">Industrial Production & Inventory Management</p>
+              </div>
+              <button onClick={() => setIsLoginModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {errorMsg && (
+              <div className="p-3 bg-gradient-to-r from-red-500/20 to-rose-500/20 border border-red-500/30 rounded-lg text-xs text-red-600 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {errorMsg}
+              </div>
+            )}
+
+            {/* Demo Quick Selector */}
+            <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 rounded-xl p-4 space-y-3">
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block text-center">
+                Quick Demo Login
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                {demoAccounts.map((acc) => (
+                  <button
+                    key={acc.email}
+                    disabled={isLoading}
+                    onClick={() => handleQuickLogin(acc.email)}
+                    className={`p-3 rounded-lg ${acc.bg} border text-left transition-all group cursor-pointer disabled:opacity-50 shadow-md`}
+                  >
+                    <div className="text-xs font-bold text-white flex items-center justify-between">
+                      {acc.title}
+                      <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-all" />
+                    </div>
+                    <span className="text-[10px] text-white/80 font-mono block mt-0.5">{acc.email}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Login */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-slate-600 block mb-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-slate-600 block mb-1">Password</label>
+                <div className="relative">
+                  <Lock className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    placeholder="Enter your password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-medium text-sm shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="h-4 w-4" />
+                    Login
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
