@@ -20,7 +20,11 @@ import {
 import { authAPI } from '../api/services';
 import type { User } from '../types';
 
-export const LandingPage: React.FC = () => {
+interface LandingPageProps {
+  onLoginSuccess?: (user: User, token: string) => void;
+}
+
+export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);

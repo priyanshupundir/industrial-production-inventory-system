@@ -45,7 +45,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={!user ? <LoginPage onLoginSuccess={handleLoginSuccess} /> : <Navigate to="/" replace />} />
-        <Route path="/" element={!user ? <LandingPage /> : <DashboardLayout user={user} onLogout={handleLogout}><DashboardPage /></DashboardLayout>} />
+        <Route path="/" element={!user ? <LandingPage onLoginSuccess={handleLoginSuccess} /> : <DashboardLayout user={user} onLogout={handleLogout}><DashboardPage /></DashboardLayout>} />
         <Route path="/inventory" element={user ? <DashboardLayout user={user} onLogout={handleLogout}><InventoryPage /></DashboardLayout> : <Navigate to="/login" replace />} />
         <Route path="/production" element={user ? <DashboardLayout user={user} onLogout={handleLogout}><ProductionOrdersPage /></DashboardLayout> : <Navigate to="/login" replace />} />
         <Route path="/quality" element={user ? <DashboardLayout user={user} onLogout={handleLogout}><QualityInspectionPage /></DashboardLayout> : <Navigate to="/login" replace />} />
