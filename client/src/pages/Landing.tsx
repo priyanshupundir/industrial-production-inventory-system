@@ -42,6 +42,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       const data = await authAPI.login(loginEmail, loginPassword);
       localStorage.setItem('token', data.accessToken);
       localStorage.setItem('user', JSON.stringify(data.user));
+      if (onLoginSuccess) {
+        onLoginSuccess(data.user, data.accessToken);
+      }
       navigate('/');
     } catch (err: any) {
       setErrorMsg(err.response?.data?.error || 'Login failed. Please try again.');
