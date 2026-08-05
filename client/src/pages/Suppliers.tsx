@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { 
-  Truck, 
   ShoppingBag, 
   Plus, 
   Building2, 
   Phone, 
   Mail, 
-  Clock, 
-  CheckCircle2, 
   X 
 } from 'lucide-react';
 
@@ -32,7 +29,7 @@ interface PurchaseOrder {
 }
 
 export const SuppliersPage: React.FC = () => {
-  const [suppliers, setSuppliers] = useState<SupplierItem[]>([
+  const [suppliers] = useState<SupplierItem[]>([
     {
       id: '1',
       name: 'Apex Precision Steel Industries',
@@ -76,7 +73,7 @@ export const SuppliersPage: React.FC = () => {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [poNumber, setPoNumber] = useState(`PO-2026-${Math.floor(803 + purchaseOrders.length)}`);
+  const [poNumber] = useState(`PO-2026-${Math.floor(803 + purchaseOrders.length)}`);
   const [selectedSupplier, setSelectedSupplier] = useState('Apex Precision Steel Industries');
   const [orderItems, setOrderItems] = useState('');
   const [totalAmount, setTotalAmount] = useState(50000);

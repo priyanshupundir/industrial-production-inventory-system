@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Factory, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 import type { Role, User } from '../types';
 import { authAPI } from '../api/services';
@@ -8,6 +9,7 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('manager@industrial.com');
   const [password, setPassword] = useState('password123');
   const [errorMsg, setErrorMsg] = useState('');
@@ -20,28 +22,32 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     { role: 'QUALITY_INSPECTOR' as Role, title: 'Quality Inspector', email: 'inspector@industrial.com', bg: 'bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30', iconBg: 'from-purple-500 to-pink-500' },
   ];
 
-  const handleQuickLogin = async (demoEmail: string, role: Role) => {
+  const handleQuickLogin = async (demoEmail: string) => {
     setIsLoading(true);
     setErrorMsg('');
     try {
       const data = await authAPI.login(demoEmail, 'password123');
       onLoginSuccess(data.user, data.accessToken);
-    } catch (err) {
+    } catch {
       setErrorMsg('Unable to reach the login API. Start PostgreSQL and the backend server, then try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrorMsg('');
     try {
       const data = await authAPI.login(email, password);
-      onLoginSuccess(data.user, data.accessToken);
-    } catch (err: any) {
-      setErrorMsg(err.response?.data?.error || 'Unable to reach the login API. Start PostgreSQL and the backend server, then try again.');
+      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      if (onLoginSuccess) {
+        onLoginSuccess(data.user, data.accessToken);
+      }
+      navigate('/');
+    } catch {
+      setErrorMsg('Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +81,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               <button
                 key={acc.email}
                 disabled={isLoading}
-                onClick={() => handleQuickLogin(acc.email, acc.role)}
+                onClick={() => handleQuickLogin(acc.email)}
                 className={`p-3 rounded-lg ${acc.bg} border text-left transition-all group cursor-pointer disabled:opacity-50 shadow-md`}
               >
                 <div className="text-xs font-bold text-slate-700 group-hover:text-white flex items-center justify-between">
@@ -89,7 +95,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Form Login */}
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl p-6 space-y-4 shadow-lg">
+        <form onSubmit={handleLogin} className="bg-white border border-slate-200 rounded-xl p-6 space-y-4 shadow-lg">
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-slate-600">Email Address</label>
             <input

@@ -84,8 +84,10 @@ export const QualityInspectionPage: React.FC = () => {
   });
 
   const onSubmit = (values: InspectionForm) => {
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now();
     const newReport: QualityInspection = {
-      id: Date.now().toString(),
+      id: now.toString(),
       inspectionCode: `QC-2026-0${45 + inspections.length}`,
       batchNumber: values.batchNumber,
       sampleSize: values.sampleSize,
@@ -94,7 +96,7 @@ export const QualityInspectionPage: React.FC = () => {
       rejectedQty: values.rejectedQty,
       status: values.status,
       notes: values.notes || 'Inspection completed per ISO 9001 compliance standards.',
-      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      createdAt: new Date(now).toISOString().replace('T', ' ').substring(0, 16),
     };
     setInspections([newReport, ...inspections]);
     setIsModalOpen(false);

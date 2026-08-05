@@ -108,16 +108,18 @@ export const ProductionOrdersPage: React.FC = () => {
     const v = values as CreateOrderForm;
     if (usingDemo) {
       // Optimistic demo update
+      // eslint-disable-next-line react-hooks/purity
+      const now = Date.now();
       const newOrder: ProductionOrder = {
-        id: Date.now().toString(),
+        id: now.toString(),
         orderNumber: `PRD-2026-${104 + demoOrders.length}`,
         productName: v.productName,
         targetQuantity: v.targetQuantity,
         completedQuantity: 0,
         status: 'PENDING',
         priority: v.priority,
-        startDate: new Date().toISOString().split('T')[0],
-        dueDate: new Date(Date.now() + 7 * 86_400_000).toISOString().split('T')[0],
+        startDate: new Date(now).toISOString().split('T')[0],
+        dueDate: new Date(now + 7 * 86_400_000).toISOString().split('T')[0],
       };
       setDemoOrders([newOrder, ...demoOrders]);
     } else {

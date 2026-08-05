@@ -66,7 +66,7 @@ export const exportToPDF = async (elementId: string, title: string) => {
       htmlElement.style.color = '';
     });
     
-    const canvas = await html2canvas(clone, {
+    const canvas = await html2canvas(el, {
       scale: 2,
       backgroundColor: '#ffffff',
       logging: false,

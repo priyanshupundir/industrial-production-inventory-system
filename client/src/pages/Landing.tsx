@@ -46,9 +46,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
         onLoginSuccess(data.user, data.accessToken);
       }
       navigate('/');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login error:', err);
-      const errorMessage = err.message || err.response?.data?.error || 'Login failed. Please try again.';
+      const errorMessage = err instanceof Error ? err.message : (err as any).response?.data?.error || 'Login failed. Please try again.';
       setErrorMsg(errorMessage);
     } finally {
       setIsLoading(false);

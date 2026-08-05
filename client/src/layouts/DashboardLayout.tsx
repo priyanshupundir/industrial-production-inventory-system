@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Factory, 
   Boxes, 
@@ -21,8 +21,6 @@ interface DashboardLayoutProps {
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, user, onLogout }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: BarChart3 },

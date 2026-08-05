@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cpu, Wrench, AlertTriangle, CheckCircle2, Clock, X } from 'lucide-react';
+import { Cpu, Wrench, CheckCircle2, Clock, X } from 'lucide-react';
 
 export const MachinesPage: React.FC = () => {
   const [machines, setMachines] = useState([
@@ -34,7 +34,7 @@ export const MachinesPage: React.FC = () => {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMachine, setSelectedMachine] = useState<any>(null);
+  const [selectedMachine, setSelectedMachine] = useState<{ id: string; name: string; status: string } | null>(null);
   const [actionTaken, setActionTaken] = useState('');
   const [maintenanceCost, setMaintenanceCost] = useState(1500);
 
