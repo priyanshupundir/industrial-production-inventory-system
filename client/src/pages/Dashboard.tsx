@@ -151,20 +151,20 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {kpis.map((kpi, idx) => {
           const Icon = kpi.icon;
           return (
-            <div key={idx} className={`p-5 rounded-xl border ${kpi.bg} ${kpi.border} panel-effect transition-all hover:scale-[1.02] hover:shadow-lg`}>
+            <div key={idx} className={`p-4 sm:p-5 rounded-xl border ${kpi.bg} ${kpi.border} panel-effect transition-all hover:scale-[1.02] hover:shadow-lg`}>
               <div className="flex items-center justify-between">
-                <span className={`text-xs font-semibold uppercase tracking-wider ${kpi.titleColor}`}>{kpi.title}</span>
-                <div className={`p-2 rounded-lg ${kpi.iconBg} glow-effect ${kpi.iconColor}`}>
-                  <Icon className="h-5 w-5" />
+                <span className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider ${kpi.titleColor}`}>{kpi.title}</span>
+                <div className={`p-1.5 sm:p-2 rounded-lg ${kpi.iconBg} glow-effect ${kpi.iconColor}`}>
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
               </div>
-              <div className="mt-3">
-                <span className={`text-3xl font-extrabold ${kpi.valueColor} drop-shadow-sm`}>{isLoading ? '--' : kpi.value}</span>
-                <p className={`text-xs ${kpi.changeColor} mt-1`}>{kpi.change}</p>
+              <div className="mt-2 sm:mt-3">
+                <span className={`text-2xl sm:text-3xl font-extrabold ${kpi.valueColor} drop-shadow-sm`}>{isLoading ? '--' : kpi.value}</span>
+                <p className={`text-[10px] sm:text-xs ${kpi.changeColor} mt-1`}>{kpi.change}</p>
               </div>
             </div>
           );
@@ -172,24 +172,24 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* ── Row 1: Monthly Production + Inventory Distribution ─────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Monthly Production Bar Chart */}
-        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-4 panel-effect">
+        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 space-y-3 sm:space-y-4 panel-effect">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-semibold text-[var(--foreground)]">Monthly Production Output</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">Target units vs Actual completed output</p>
+              <h3 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Monthly Production Output</h3>
+              <p className="text-[10px] sm:text-xs text-[var(--muted-foreground)]">Target units vs Actual completed output</p>
             </div>
-            <div className="p-2 rounded-lg bg-[var(--primary)] glow-effect">
-              <TrendingUp className="h-5 w-5 text-[var(--primary-foreground)]" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-[var(--primary)] glow-effect">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--primary-foreground)]" />
             </div>
           </div>
-          <div className="h-64 w-full">
+          <div className="h-48 sm:h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={MONTHLY_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.3 0.008 160)" />
-                <XAxis dataKey="month" stroke="oklch(0.7 0.02 160)" fontSize={12} />
-                <YAxis stroke="oklch(0.7 0.02 160)" fontSize={12} />
+                <XAxis dataKey="month" stroke="oklch(0.7 0.02 160)" fontSize={10} />
+                <YAxis stroke="oklch(0.7 0.02 160)" fontSize={10} />
                 <Tooltip {...TOOLTIP_STYLE} />
                 <Bar dataKey="Target" fill="url(#blueGradient)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Completed" fill="url(#greenGradient)" radius={[4, 4, 0, 0]} />
@@ -209,20 +209,20 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Inventory Distribution Pie */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-4 panel-effect">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 space-y-3 sm:space-y-4 panel-effect">
           <div>
-            <h3 className="text-base font-semibold text-[var(--foreground)]">Inventory Distribution</h3>
-            <p className="text-xs text-[var(--muted-foreground)]">Breakdown by category</p>
+            <h3 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Inventory Distribution</h3>
+            <p className="text-[10px] sm:text-xs text-[var(--muted-foreground)]">Breakdown by category</p>
           </div>
-          <div className="h-64 w-full flex items-center justify-center">
+          <div className="h-48 sm:h-64 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={CATEGORY_DATA}
                   cx="50%"
                   cy="50%"
-                  innerRadius={55}
-                  outerRadius={80}
+                  innerRadius={40}
+                  outerRadius={60}
                   paddingAngle={5}
                   dataKey="value"
                 >
@@ -234,7 +234,7 @@ export const DashboardPage: React.FC = () => {
                 <Legend
                   verticalAlign="bottom"
                   height={36}
-                  formatter={(value) => <span className="text-xs text-[var(--muted-foreground)]">{value}</span>}
+                  formatter={(value) => <span className="text-[10px] sm:text-xs text-[var(--muted-foreground)]">{value}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -243,24 +243,24 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* ── Row 2: Defect Rate Trend + Machine Utilization ─────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Defect Rate Trend — Line Chart */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-4 panel-effect">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 space-y-3 sm:space-y-4 panel-effect">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-semibold text-[var(--foreground)]">Monthly Defect Rate</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">Quality inspection rejection percentage</p>
+              <h3 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Monthly Defect Rate</h3>
+              <p className="text-[10px] sm:text-xs text-[var(--muted-foreground)]">Quality inspection rejection percentage</p>
             </div>
-            <div className="p-2 rounded-lg bg-[var(--info)] glow-effect">
-              <ShieldCheck className="h-5 w-5 text-[var(--info-foreground)]" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-[var(--info)] glow-effect">
+              <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--info-foreground)]" />
             </div>
           </div>
-          <div className="h-56 w-full">
+          <div className="h-48 sm:h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={DEFECT_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.3 0.008 160)" />
-                <XAxis dataKey="month" stroke="oklch(0.7 0.02 160)" fontSize={12} />
-                <YAxis stroke="oklch(0.7 0.02 160)" fontSize={12} unit="%" domain={[0, 8]} />
+                <XAxis dataKey="month" stroke="oklch(0.7 0.02 160)" fontSize={10} />
+                <YAxis stroke="oklch(0.7 0.02 160)" fontSize={10} unit="%" domain={[0, 8]} />
                 <Tooltip
                   {...TOOLTIP_STYLE}
                   formatter={(value: any) => [`${value}%`, 'Defect Rate']}
@@ -285,21 +285,21 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Machine Utilization — Radar / Bar Chart */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-4 panel-effect">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 space-y-3 sm:space-y-4 panel-effect">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-semibold text-[var(--foreground)]">Machine Utilization</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">Workstation load capacity (%) — current cycle</p>
+              <h3 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Machine Utilization</h3>
+              <p className="text-[10px] sm:text-xs text-[var(--muted-foreground)]">Workstation load capacity (%) — current cycle</p>
             </div>
-            <div className="p-2 rounded-lg bg-[var(--warning)] glow-effect">
-              <Activity className="h-5 w-5 text-[var(--warning-foreground)]" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-[var(--warning)] glow-effect">
+              <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--warning-foreground)]" />
             </div>
           </div>
-          <div className="h-56 w-full">
+          <div className="h-48 sm:h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={MACHINE_DATA} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
                 <PolarGrid stroke="oklch(0.3 0.008 160)" />
-                <PolarAngleAxis dataKey="machine" tick={{ fill: 'oklch(0.7 0.02 160)', fontSize: 11 }} />
+                <PolarAngleAxis dataKey="machine" tick={{ fill: 'oklch(0.7 0.02 160)', fontSize: 9 }} />
                 <Radar
                   name="Utilization %"
                   dataKey="utilization"
@@ -326,18 +326,18 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* ── Equipment Telemetry ────────────────────────────────────────────── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 panel-effect">
-        <h3 className="text-base font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-[var(--primary)] glow-effect">
-            <Cpu className="h-5 w-5 text-[var(--primary-foreground)]" />
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 panel-effect">
+        <h3 className="text-sm sm:text-base font-semibold text-[var(--foreground)] mb-3 sm:mb-4 flex items-center gap-2">
+          <div className="p-1.5 sm:p-2 rounded-lg bg-[var(--primary)] glow-effect">
+            <Cpu className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--primary-foreground)]" />
           </div>
           Active Workstation Status & Load Telemetry
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {MACHINES_TELEMETRY.map((m) => (
-            <div key={m.id} className="p-4 rounded-lg bg-[var(--muted)] border border-[var(--border)] space-y-3 panel-effect">
+            <div key={m.id} className="p-3 sm:p-4 rounded-lg bg-[var(--muted)] border border-[var(--border)] space-y-2 sm:space-y-3 panel-effect">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-[var(--primary)] font-bold">{m.id}</span>
+                <span className="text-[10px] sm:text-xs font-mono text-[var(--primary)] font-bold">{m.id}</span>
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
                     m.status === 'OPERATIONAL'
@@ -348,13 +348,13 @@ export const DashboardPage: React.FC = () => {
                   {m.status.replace('_', ' ')}
                 </span>
               </div>
-              <p className="text-sm font-semibold text-[var(--foreground)] truncate">{m.name}</p>
+              <p className="text-[10px] sm:text-sm font-semibold text-[var(--foreground)] truncate">{m.name}</p>
               <div className="space-y-1">
-                <div className="flex justify-between text-xs text-[var(--muted-foreground)]">
+                <div className="flex justify-between text-[10px] sm:text-xs text-[var(--muted-foreground)]">
                   <span>Workload</span>
                   <span className="font-bold text-[var(--foreground)]">{m.load}%</span>
                 </div>
-                <div className="h-2 w-full bg-[var(--secondary)] rounded-full overflow-hidden">
+                <div className="h-1.5 sm:h-2 w-full bg-[var(--secondary)] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${
                       m.load > 80 
