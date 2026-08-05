@@ -49,7 +49,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
     } catch (err: unknown) {
       console.error('Login error:', err);
       const errorMessage = err instanceof Error ? err.message : (err as any).response?.data?.error || 'Login failed. Please try again.';
-      setErrorMsg(errorMessage);
+      
+      // If it's a network error, offer demo mode
+      if (errorMessage.includes('Network') || errorMessage.includes('timeout') || errorMessage.includes('connect')) {
+        setErrorMsg('Server is currently unavailable. Try using the demo accounts below for offline access.');
+      } else {
+        setErrorMsg(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -66,6 +72,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
     setLoginEmail(email);
     setLoginPassword('password123');
     setIsLoginModalOpen(true);
+  };
+
+  const handleDemoLogin = (email: string, role: string) => {
+    // Demo mode - bypass backend entirely
+    const demoUser: User = {
+      id: 'demo-' + Date.now(),
+      email,
+      name: role.charAt(0).toUpperCase() + role.slice(1),
+      role: role.toUpperCase() as any,
+    };
+    const demoToken = 'demo-token-' + Date.now();
+    localStorage.setItem('token', demoToken);
+    localStorage.setItem('user', JSON.stringify(demoUser));
+    if (onLoginSuccess) {
+      onLoginSuccess(demoUser, demoToken);
+    }
+    navigate('/');
   };
 
   return (
@@ -360,14 +383,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
             {/* Demo Quick Selector */}
             <div className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 space-y-3 panel-effect">
               <span className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wider block text-center">
-                Quick Demo Login
+                Quick Demo Login (Offline Mode)
               </span>
               <div className="grid grid-cols-2 gap-2">
                 {demoAccounts.map((acc) => (
                   <button
                     key={acc.email}
                     disabled={isLoading}
-                    onClick={() => handleQuickLogin(acc.email)}
+                    onClick={() => handleDemoLogin(acc.email, acc.role)}
                     className="p-3 rounded-lg bg-[var(--primary)] border border-[var(--primary)] text-left transition-all group cursor-pointer disabled:opacity-50 glow-effect"
                   >
                     <div className="text-xs font-bold text-[var(--primary-foreground)] flex items-center justify-between">
