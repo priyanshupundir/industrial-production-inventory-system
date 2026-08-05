@@ -16,6 +16,7 @@ import {
   X,
   Mail,
   Lock,
+  Menu,
 } from 'lucide-react';
 import { authAPI } from '../api/services';
 import type { User } from '../types';
@@ -32,6 +33,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
   const [loginPassword, setLoginPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +105,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
               </div>
               <span className="text-xl font-bold text-[var(--foreground)]">INDUS-SYS</span>
             </div>
+            
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">Features</a>
               <a href="#about" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">About</a>
@@ -114,38 +118,64 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
                 Login
               </button>
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg bg-[var(--secondary)] text-[var(--foreground)]"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden py-4 space-y-3 border-t border-[var(--border)]">
+              <a href="#features" className="block text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors py-2">Features</a>
+              <a href="#about" className="block text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors py-2">About</a>
+              <a href="#contact" className="block text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors py-2">Contact</a>
+              <button
+                onClick={() => {
+                  setIsLoginModalOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] text-sm font-medium glow-effect transition-all"
+              >
+                Login
+              </button>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-32 px-4 sm:px-6 lg:px-8">
+      <section className="pt-16 pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--muted)] border border-[var(--border)] text-[var(--primary)] text-sm font-medium mb-6 panel-effect">
-              <Zap className="h-4 w-4" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] text-[var(--primary)] text-xs sm:text-sm font-medium mb-4 sm:mb-6 panel-effect">
+              <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
               Industrial Production & Inventory Management
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-[var(--foreground)] tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--foreground)] tracking-tight mb-4 sm:mb-6">
               Streamline Your
               <span className="text-[var(--primary)]">
                 {' '}Industrial Operations
               </span>
             </h1>
-            <p className="text-xl text-[var(--muted-foreground)] mb-10 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-[var(--muted-foreground)] mb-6 sm:mb-10 max-w-2xl mx-auto">
               Comprehensive production tracking, inventory management, and quality control system designed for modern manufacturing facilities.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <button
                 onClick={() => setIsLoginModalOpen(true)}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium glow-effect transition-all glow-ring"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium glow-effect transition-all glow-ring text-sm sm:text-base"
               >
                 Get Started
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
               <a
                 href="#features"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[var(--secondary)] border border-[var(--border)] hover:border-[var(--primary)] text-[var(--secondary-foreground)] font-medium panel-effect transition-all"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 rounded-xl bg-[var(--secondary)] border border-[var(--border)] hover:border-[var(--primary)] text-[var(--secondary-foreground)] font-medium panel-effect transition-all text-sm sm:text-base"
               >
                 Learn More
               </a>
@@ -153,17 +183,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mt-12 sm:mt-20">
             {[
               { label: 'Active Users', value: '500+', icon: Users },
               { label: 'Production Orders', value: '10K+', icon: Package },
               { label: 'Efficiency Gain', value: '40%', icon: TrendingUp },
               { label: 'Uptime', value: '99.9%', icon: ShieldCheck },
             ].map((stat, index) => (
-              <div key={index} className="bg-[var(--card)] rounded-xl p-6 border border-[var(--border)] panel-effect text-center">
-                <stat.icon className="h-8 w-8 text-[var(--primary)] mx-auto mb-3" />
-                <div className="text-3xl font-bold text-[var(--foreground)]">{stat.value}</div>
-                <div className="text-sm text-[var(--muted-foreground)]">{stat.label}</div>
+              <div key={index} className="bg-[var(--card)] rounded-xl p-4 sm:p-6 border border-[var(--border)] panel-effect text-center">
+                <stat.icon className="h-6 w-6 sm:h-8 sm:w-8 text-[var(--primary)] mx-auto mb-2 sm:mb-3" />
+                <div className="text-2xl sm:text-3xl font-bold text-[var(--foreground)]">{stat.value}</div>
+                <div className="text-xs sm:text-sm text-[var(--muted-foreground)]">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -171,16 +201,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-[var(--foreground)] mb-4">Powerful Features</h2>
-            <p className="text-xl text-[var(--muted-foreground)] max-w-2xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-4">Powerful Features</h2>
+            <p className="text-base sm:text-xl text-[var(--muted-foreground)] max-w-2xl mx-auto">
               Everything you need to manage your industrial production and inventory operations
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             {[
               {
                 icon: BarChart3,
@@ -213,12 +243,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
                 description: 'Get notified about low stock, maintenance due dates, and quality issues before they become problems.',
               },
             ].map((feature, index) => (
-              <div key={index} className="group p-6 rounded-xl border border-[var(--border)] hover:border-[var(--primary)] transition-all bg-[var(--card)] panel-effect">
-                <div className="h-12 w-12 rounded-lg bg-[var(--primary)] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform glow-effect">
-                  <feature.icon className="h-6 w-6 text-[var(--primary-foreground)]" />
+              <div key={index} className="group p-4 sm:p-6 rounded-xl border border-[var(--border)] hover:border-[var(--primary)] transition-all bg-[var(--card)] panel-effect">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-[var(--primary)] flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform glow-effect">
+                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 text-[var(--primary-foreground)]" />
                 </div>
-                <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">{feature.title}</h3>
-                <p className="text-[var(--muted-foreground)]">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-bold text-[var(--foreground)] mb-2">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-[var(--muted-foreground)]">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -226,16 +256,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="about" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-[var(--foreground)] mb-6">Built for Modern Manufacturing</h2>
-              <p className="text-lg text-[var(--muted-foreground)] mb-8">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-6">Built for Modern Manufacturing</h2>
+              <p className="text-base sm:text-lg text-[var(--muted-foreground)] mb-6 sm:mb-8">
                 INDUS-SYS is designed to meet the complex needs of industrial production facilities. 
                 From raw material procurement to finished goods dispatch, our system provides end-to-end visibility and control.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {[
                   'Real-time production monitoring and analytics',
                   'Comprehensive inventory tracking with QR codes',
@@ -245,32 +275,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
                   'Export reports in multiple formats',
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-[var(--success)]" />
-                    <span className="text-[var(--foreground)]">{item}</span>
+                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--success)]" />
+                    <span className="text-sm sm:text-base text-[var(--foreground)]">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="bg-[var(--primary)] rounded-2xl p-8 shadow-2xl glow-effect">
-              <div className="bg-[var(--card)] rounded-xl p-6 panel-effect">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="h-12 w-12 rounded-full bg-[var(--primary)] flex items-center justify-center">
-                    <Factory className="h-6 w-6 text-[var(--primary-foreground)]" />
+            <div className="bg-[var(--primary)] rounded-2xl p-6 sm:p-8 shadow-2xl glow-effect">
+              <div className="bg-[var(--card)] rounded-xl p-4 sm:p-6 panel-effect">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[var(--primary)] flex items-center justify-center">
+                    <Factory className="h-5 w-5 sm:h-6 sm:w-6 text-[var(--primary-foreground)]" />
                   </div>
                   <div>
-                    <div className="font-bold text-[var(--foreground)]">Production Line A</div>
-                    <div className="text-sm text-[var(--muted-foreground)]">Status: Operational</div>
+                    <div className="font-bold text-sm sm:text-base text-[var(--foreground)]">Production Line A</div>
+                    <div className="text-xs sm:text-sm text-[var(--muted-foreground)]">Status: Operational</div>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-[var(--muted-foreground)]">Progress</span>
                     <span className="font-medium text-[var(--foreground)]">75%</span>
                   </div>
                   <div className="h-2 bg-[var(--muted)] rounded-full overflow-hidden">
                     <div className="h-full bg-[var(--primary)] rounded-full" style={{ width: '75%' }} />
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-[var(--muted-foreground)]">Quality Rate</span>
                     <span className="font-medium text-[var(--success)]">98.5%</span>
                   </div>
@@ -282,29 +312,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* CTA Section */}
-      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-[var(--foreground)] mb-4">Ready to Transform Your Operations?</h2>
-          <p className="text-xl text-[var(--muted-foreground)] mb-10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-4">Ready to Transform Your Operations?</h2>
+          <p className="text-base sm:text-xl text-[var(--muted-foreground)] mb-8 sm:mb-10">
             Join hundreds of manufacturing facilities already using INDUS-SYS to streamline their production and inventory management.
           </p>
-          <div className="bg-[var(--card)] rounded-2xl p-8 border border-[var(--border)] panel-effect">
-            <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+          <div className="bg-[var(--card)] rounded-2xl p-6 sm:p-8 border border-[var(--border)] panel-effect">
+            <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-lg mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
+                className="flex-1 px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 text-sm"
               />
               <button
                 type="button"
-                className="px-6 py-3 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium glow-effect transition-all glow-ring"
+                className="px-6 py-3 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium glow-effect transition-all glow-ring text-sm"
               >
                 Get Started
               </button>
             </form>
-            <p className="text-sm text-[var(--muted-foreground)] mt-4">
+            <p className="text-xs sm:text-sm text-[var(--muted-foreground)] mt-4">
               Free trial available. No credit card required.
             </p>
           </div>
@@ -312,23 +342,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[var(--popover)] text-[var(--muted-foreground)] py-12 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
+      <footer className="bg-[var(--popover)] text-[var(--muted-foreground)] py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-4 gap-6 sm:gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <div className="h-8 w-8 rounded-lg bg-[var(--primary)] flex items-center justify-center glow-effect">
                   <Factory className="h-5 w-5 text-[var(--primary-foreground)]" />
                 </div>
-                <span className="text-xl font-bold text-[var(--foreground)]">INDUS-SYS</span>
+                <span className="text-lg sm:text-xl font-bold text-[var(--foreground)]">INDUS-SYS</span>
               </div>
-              <p className="text-sm">
+              <p className="text-xs sm:text-sm">
                 Industrial production and inventory management system for modern manufacturing facilities.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-[var(--foreground)] mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3 sm:mb-4 text-sm sm:text-base">Product</h4>
+              <ul className="space-y-2 text-xs sm:text-sm">
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Features</a></li>
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Pricing</a></li>
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Documentation</a></li>
@@ -336,8 +366,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-[var(--foreground)] mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3 sm:mb-4 text-sm sm:text-base">Company</h4>
+              <ul className="space-y-2 text-xs sm:text-sm">
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">About</a></li>
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Blog</a></li>
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Careers</a></li>
@@ -345,15 +375,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold text-[var(--foreground)] mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3 sm:mb-4 text-sm sm:text-base">Legal</h4>
+              <ul className="space-y-2 text-xs sm:text-sm">
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Privacy</a></li>
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Terms</a></li>
                 <li><a href="#" className="hover:text-[var(--foreground)] transition-colors">Security</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-[var(--border)] mt-12 pt-8 text-center text-sm">
+          <div className="border-t border-[var(--border)] mt-8 sm:mt-12 pt-6 sm:pt-8 text-center text-xs sm:text-sm">
             <p>&copy; 2024 INDUS-SYS. All rights reserved.</p>
           </div>
         </div>
@@ -362,10 +392,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       {/* Login Modal */}
       {isLoginModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4 panel-effect">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-md p-4 sm:p-6 shadow-2xl space-y-4 panel-effect max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <div>
-                <h3 className="text-base font-bold text-[var(--foreground)]">Login to INDUS-SYS</h3>
+                <h3 className="text-base sm:text-lg font-bold text-[var(--foreground)]">Login to INDUS-SYS</h3>
                 <p className="text-xs text-[var(--muted-foreground)]">Industrial Production & Inventory Management</p>
               </div>
               <button onClick={() => setIsLoginModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
@@ -381,7 +411,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
             )}
 
             {/* Demo Quick Selector */}
-            <div className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 space-y-3 panel-effect">
+            <div className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-3 sm:p-4 space-y-3 panel-effect">
               <span className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wider block text-center">
                 Quick Demo Login (Offline Mode)
               </span>
@@ -391,7 +421,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
                     key={acc.email}
                     disabled={isLoading}
                     onClick={() => handleDemoLogin(acc.email, acc.role)}
-                    className="p-3 rounded-lg bg-[var(--primary)] border border-[var(--primary)] text-left transition-all group cursor-pointer disabled:opacity-50 glow-effect"
+                    className="p-2 sm:p-3 rounded-lg bg-[var(--primary)] border border-[var(--primary)] text-left transition-all group cursor-pointer disabled:opacity-50 glow-effect"
                   >
                     <div className="text-xs font-bold text-[var(--primary-foreground)] flex items-center justify-between">
                       {acc.title}
