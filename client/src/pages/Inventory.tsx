@@ -213,27 +213,27 @@ export const InventoryPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Inventory & Material Management</h2>
-          <p className="text-sm text-slate-500">Track raw materials, component stocks, finished goods, and batch numbers.</p>
+          <h2 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Inventory & Material Management</h2>
+          <p className="text-sm text-[var(--muted-foreground)]">Track raw materials, component stocks, finished goods, and batch numbers.</p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => refetch()}
-className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 text-sm border border-slate-300 transition-all cursor-pointer shadow-md"
+className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-sm border border-[var(--border)] transition-all cursor-pointer"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600/20 to-green-600/20 hover:from-emerald-600/30 hover:to-green-600/30 text-emerald-200 font-medium text-sm border border-emerald-500/30 transition-all cursor-pointer shadow-md"
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-[var(--success)]/20 hover:bg-[var(--success)]/30 text-[var(--success-foreground)] font-medium text-sm border border-[var(--success)]/30 transition-all cursor-pointer"
           >
-            <Download className="h-4 w-4 text-emerald-400" />
+            <Download className="h-4 w-4 text-[var(--success)]" />
             Export CSV
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-medium text-sm shadow-lg shadow-blue-500/30 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium text-sm glow-effect transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Add Material Entry
@@ -243,30 +243,30 @@ className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-
 
       {/* Status bar */}
       {isError && (
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-600">
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-[var(--warning)]/10 border border-[var(--warning)]/30 rounded-lg text-sm text-[var(--warning-foreground)]">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           Backend offline — showing demo data. Changes will be stored locally.
         </div>
       )}
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-white border border-slate-200 shadow-lg">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[var(--card)] border border-[var(--border)] panel-effect">
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-blue-400" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[var(--primary)]" />
           <input
             type="text"
             placeholder="Search item, code, or batch…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-className="w-full pl-9 pr-4 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder-slate-400"
+className="w-full pl-9 pr-4 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 placeholder-[var(--muted-foreground)]"
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Filter className="h-4 w-4 text-purple-400" />
+          <Filter className="h-4 w-4 text-[var(--primary)]" />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+className="px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
           >
             <option value="ALL">All Categories</option>
             <option value="RAW_MATERIAL">Raw Materials</option>
@@ -278,16 +278,16 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
       </div>
 
       {/* Inventory Table */}
-      <div id="inventory-table" className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
+      <div id="inventory-table" className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden panel-effect">
         {isLoading ? (
-          <div className="flex items-center justify-center py-24 gap-3 text-slate-500">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+          <div className="flex items-center justify-center py-24 gap-3 text-[var(--muted-foreground)]">
+            <Loader2 className="h-6 w-6 animate-spin text-[var(--primary)]" />
             <span className="text-sm">Loading inventory…</span>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase text-slate-500 tracking-wider">
+            <table className="w-full text-left text-sm text-[var(--foreground)]">
+              <thead className="bg-[var(--muted)] border-b border-[var(--border)] text-xs font-semibold uppercase text-[var(--muted-foreground)] tracking-wider">
                 <tr>
                   <th className="px-6 py-4">Item & Code</th>
                   <th className="px-6 py-4">Category</th>
@@ -297,38 +297,38 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-[var(--border)]">
                 {filteredItems.map((item) => {
                   const isLow = item.quantity <= item.minThreshold;
                   const categoryColors: Record<string, string> = {
-                    RAW_MATERIAL: 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border-blue-500/30',
-                    COMPONENT: 'bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30',
-                    FINISHED_GOOD: 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-300 border-amber-500/30',
-                    SPARE_PART: 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border-purple-500/30',
+                    RAW_MATERIAL: 'bg-[var(--info)]/20 text-[var(--info-foreground)] border-[var(--info)]/30',
+                    COMPONENT: 'bg-[var(--success)]/20 text-[var(--success-foreground)] border-[var(--success)]/30',
+                    FINISHED_GOOD: 'bg-[var(--warning)]/20 text-[var(--warning-foreground)] border-[var(--warning)]/30',
+                    SPARE_PART: 'bg-[var(--destructive)]/20 text-[var(--destructive-foreground)] border-[var(--destructive)]/30',
                   };
                   return (
-                    <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                    <tr key={item.id} className="hover:bg-[var(--muted)] transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-slate-900">{item.name}</div>
-                        <div className="text-xs font-mono text-blue-600 mt-0.5">{item.itemCode}</div>
+                        <div className="font-semibold text-[var(--foreground)]">{item.name}</div>
+                        <div className="text-xs font-mono text-[var(--primary)] mt-0.5">{item.itemCode}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-block text-[11px] font-semibold px-2.5 py-1 rounded border ${categoryColors[item.category] ?? 'bg-slate-100 text-slate-600 border-slate-300'}`}>
+                        <span className={`inline-block text-[11px] font-semibold px-2.5 py-1 rounded border ${categoryColors[item.category] ?? 'bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)]'}`}>
                           {categoryLabel[item.category] ?? item.category}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900">
+                          <span className="font-bold text-[var(--foreground)]">
                             {item.quantity} {item.unit}
                           </span>
                           {isLow && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border border-red-500/30 animate-pulse">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded bg-[var(--destructive)]/20 text-[var(--destructive-foreground)] border border-[var(--destructive)]/30 animate-pulse">
                               <AlertTriangle className="h-3 w-3" /> LOW STOCK
                             </span>
                           )}
                         </div>
-                        <span className="text-xs text-slate-500">Min: {item.minThreshold}</span>
+                        <span className="text-xs text-[var(--muted-foreground)]">Min: {item.minThreshold}</span>
                       </td>
                       <td className="px-6 py-4">
                         <button
@@ -338,13 +338,13 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                           }}
                           className="flex items-center gap-1.5 group cursor-pointer"
                         >
-                          <QrCode className="h-3.5 w-3.5 text-purple-400 group-hover:text-purple-300 transition-colors" />
-                          <span className="font-mono text-xs text-slate-500 group-hover:text-purple-600 transition-colors">
+                          <QrCode className="h-3.5 w-3.5 text-[var(--primary)] group-hover:text-[var(--primary-foreground)] transition-colors" />
+                          <span className="font-mono text-xs text-[var(--muted-foreground)] group-hover:text-[var(--primary)] transition-colors">
                             {item.batchNumber}
                           </span>
                         </button>
                       </td>
-                      <td className="px-6 py-4 text-xs text-slate-500">{item.location}</td>
+                      <td className="px-6 py-4 text-xs text-[var(--muted-foreground)]">{item.location}</td>
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => {
@@ -352,7 +352,7 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                             resetAdj();
                             setIsAdjustModalOpen(true);
                           }}
-                          className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 text-xs font-medium border border-slate-300 transition-all inline-flex items-center gap-1 cursor-pointer shadow-md"
+                          className="px-3 py-1.5 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-xs font-medium border border-[var(--border)] transition-all inline-flex items-center gap-1 cursor-pointer"
                         >
                           <ArrowDownUp className="h-3.5 w-3.5" /> Adjust Stock
                         </button>
@@ -362,7 +362,7 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                 })}
                 {filteredItems.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-slate-500 text-sm">
+                    <td colSpan={6} className="px-6 py-16 text-center text-[var(--muted-foreground)] text-sm">
                       No items match your filter criteria.
                     </td>
                   </tr>
@@ -375,14 +375,14 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
 
       {/* ── MODAL 1: ADD MATERIAL ENTRY ─────────────────────────────────────── */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <PackagePlus className="h-5 w-5 text-blue-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4 panel-effect">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
+                <PackagePlus className="h-5 w-5 text-[var(--primary)]" />
                 Add New Material Entry
               </h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+              <button onClick={() => setIsAddModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -390,21 +390,21 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
             <form onSubmit={handleAddSubmit(onAddItem)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Item Code *</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Item Code *</label>
                   <input
                     {...regAdd('itemCode')}
                     placeholder="e.g. RM-STL-300"
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
                   {addErrors.itemCode && (
-                    <p className="text-xs text-red-500 mt-1">{addErrors.itemCode.message}</p>
+                    <p className="text-xs text-[var(--destructive-foreground)] mt-1">{addErrors.itemCode.message}</p>
                   )}
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Category</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Category</label>
                   <select
                     {...regAdd('category')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   >
                     <option value="RAW_MATERIAL">Raw Material</option>
                     <option value="COMPONENT">Component</option>
@@ -415,73 +415,74 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-300 block mb-1">Material Name *</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Material Name *</label>
                 <input
                   {...regAdd('name')}
                   placeholder="e.g. Stainless Steel Alloy Tubing 12mm"
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
-                {addErrors.name && <p className="text-xs text-red-400 mt-1">{addErrors.name.message}</p>}
+                {addErrors.name && <p className="text-xs text-[var(--destructive-foreground)] mt-1">{addErrors.name.message}</p>}
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Initial Qty</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Initial Qty</label>
                   <input
                     type="number"
                     {...regAdd('quantity')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
-                  {addErrors.quantity && <p className="text-xs text-red-400 mt-1">{addErrors.quantity.message}</p>}
+                  {addErrors.quantity && <p className="text-xs text-[var(--destructive-foreground)] mt-1">{addErrors.quantity.message}</p>}
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Unit</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Unit</label>
                   <input
                     {...regAdd('unit')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Min Threshold</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Min Threshold</label>
                   <input
                     type="number"
                     {...regAdd('minThreshold')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Batch Number</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Batch Number</label>
                   <input
                     {...regAdd('batchNumber')}
                     placeholder="BATCH-2026-99 (auto if empty)"
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Warehouse Location</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Location *</label>
                   <input
                     {...regAdd('location')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="Warehouse Bay A"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
-                  {addErrors.location && <p className="text-xs text-red-400 mt-1">{addErrors.location.message}</p>}
+                  {addErrors.location && <p className="text-xs text-[var(--destructive-foreground)] mt-1">{addErrors.location.message}</p>}
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium cursor-pointer border border-slate-300"
+                  className="px-4 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-xs font-medium cursor-pointer border border-[var(--border)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={addMutation.isPending}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-medium shadow-lg shadow-blue-500/30 disabled:opacity-60 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] text-xs font-medium glow-effect disabled:opacity-60 flex items-center gap-2 cursor-pointer"
                 >
                   {addMutation.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   Save Material Entry
@@ -494,18 +495,18 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
 
       {/* ── MODAL 2: ADJUST STOCK ─────────────────────────────────────────────── */}
       {isAdjustModalOpen && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4 panel-effect">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Adjust Stock Level</h3>
-                <p className="text-xs text-blue-600 font-mono mt-0.5">
+                <h3 className="text-base font-bold text-[var(--foreground)]">Adjust Stock Level</h3>
+                <p className="text-xs text-[var(--primary)] font-mono mt-0.5">
                   {selectedItem.name} ({selectedItem.itemCode})
                 </p>
               </div>
               <button
                 onClick={() => setIsAdjustModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -514,7 +515,7 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
             <form onSubmit={handleAdjustSubmit(onAdjustStock)} className="space-y-4">
               {/* Type selector */}
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-2">Adjustment Type</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-2">Adjustment Type</label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['STOCK_IN', 'STOCK_OUT'] as const).map((t) => (
                     <button
@@ -524,9 +525,9 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                       className={`py-2 px-3 rounded-lg text-xs font-semibold border cursor-pointer transition-all ${
                         adjType === t
                           ? t === 'STOCK_IN'
-                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
-                            : 'bg-red-500/20 text-red-400 border-red-500/40'
-                          : 'bg-slate-950 text-slate-400 border-slate-800'
+                            ? 'bg-[var(--success)]/20 text-[var(--success-foreground)] border-[var(--success)]/40'
+                            : 'bg-[var(--destructive)]/20 text-[var(--destructive-foreground)] border-[var(--destructive)]/40'
+                          : 'bg-[var(--background)] text-[var(--muted-foreground)] border-[var(--border)]'
                       }`}
                     >
                       {t === 'STOCK_IN' ? '+ Stock Receive (IN)' : '– Stock Issue (OUT)'}
@@ -536,38 +537,38 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-300 block mb-1">
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">
                   Quantity ({selectedItem.unit})
                 </label>
                 <input
                   type="number"
                   min="1"
                   {...regAdj('quantity')}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
-                {adjErrors.quantity && <p className="text-xs text-red-400 mt-1">{adjErrors.quantity.message}</p>}
+                {adjErrors.quantity && <p className="text-xs text-[var(--destructive-foreground)] mt-1">{adjErrors.quantity.message}</p>}
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Notes (optional)</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Notes (optional)</label>
                 <input
                   {...regAdj('notes')}
                   placeholder="e.g. Supplier delivery receipt #DR-2026-44"
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
 
               {/* Preview */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1 text-slate-600">
+              <div className="p-3 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-xs space-y-1 text-[var(--muted-foreground)]">
                 <div className="flex justify-between">
                   <span>Current Stock:</span>
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-[var(--foreground)]">
                     {selectedItem.quantity} {selectedItem.unit}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Projected New Stock:</span>
-                  <span className="font-bold text-blue-600">
+                  <span className="font-bold text-[var(--primary)]">
                     {adjType === 'STOCK_IN'
                       ? selectedItem.quantity + Number(adjQty)
                       : Math.max(0, selectedItem.quantity - Number(adjQty))}{' '}
@@ -576,18 +577,18 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsAdjustModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium cursor-pointer border border-slate-300"
+                  className="px-4 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-xs font-medium cursor-pointer border border-[var(--border)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={adjustMutation.isPending}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-medium shadow-lg shadow-blue-500/30 disabled:opacity-60 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] text-xs font-medium glow-effect disabled:opacity-60 flex items-center gap-2 cursor-pointer"
                 >
                   {adjustMutation.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   Confirm Adjustment
@@ -600,16 +601,16 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
 
       {/* ── MODAL 3: QR CODE VIEWER ──────────────────────────────────────────── */}
       {isQRModalOpen && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-sm p-6 shadow-2xl space-y-4 text-center">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <QrCode className="h-4 w-4 text-blue-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-sm p-6 shadow-2xl space-y-4 text-center panel-effect">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2">
+                <QrCode className="h-4 w-4 text-[var(--primary)]" />
                 Batch QR Code
               </h3>
               <button
                 onClick={() => setIsQRModalOpen(false)}
-                className="text-slate-400 hover:text-slate-200 cursor-pointer"
+                className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -625,16 +626,16 @@ className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 
                 />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-slate-200">{selectedItem.name}</p>
-                <p className="text-xs font-mono text-blue-400">{selectedItem.itemCode}</p>
-                <p className="text-xs text-slate-400">{selectedItem.batchNumber}</p>
-                <p className="text-xs text-slate-500">{selectedItem.location}</p>
+                <p className="text-sm font-semibold text-[var(--foreground)]">{selectedItem.name}</p>
+                <p className="text-xs font-mono text-[var(--primary)]">{selectedItem.itemCode}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">{selectedItem.batchNumber}</p>
+                <p className="text-xs text-[var(--muted-foreground)]">{selectedItem.location}</p>
               </div>
             </div>
 
             <button
               onClick={() => setIsQRModalOpen(false)}
-              className="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium border border-slate-700 cursor-pointer"
+              className="w-full py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-sm font-medium border border-[var(--border)] cursor-pointer"
             >
               Close
             </button>

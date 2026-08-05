@@ -111,13 +111,13 @@ export const SuppliersPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Suppliers & Purchase Procurement</h2>
-          <p className="text-sm text-slate-500">Manage raw material vendors, purchase requisitions, and incoming shipments.</p>
+          <h2 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Suppliers & Purchase Procurement</h2>
+          <p className="text-sm text-[var(--muted-foreground)]">Manage raw material vendors, purchase requisitions, and incoming shipments.</p>
         </div>
 
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-medium text-sm shadow-lg shadow-blue-500/30 transition-all cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium text-sm glow-effect transition-all cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           Create Purchase Order
@@ -126,33 +126,33 @@ export const SuppliersPage: React.FC = () => {
 
       {/* Grid: Approved Vendors */}
       <div className="space-y-3">
-        <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg">
-            <Building2 className="h-5 w-5 text-white" />
+        <h3 className="text-base font-semibold text-[var(--foreground)] flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-[var(--primary)] glow-effect">
+            <Building2 className="h-5 w-5 text-[var(--primary-foreground)]" />
           </div>
           Approved Industrial Vendors ({suppliers.length})
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {suppliers.map((s) => (
-            <div key={s.id} className="p-5 rounded-xl bg-white border border-slate-200 space-y-3 shadow-lg hover:border-slate-300 transition-all">
+            <div key={s.id} className="p-5 rounded-xl bg-[var(--card)] border border-[var(--border)] space-y-3 panel-effect hover:border-[var(--primary)] transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-blue-600 font-bold px-2 py-0.5 rounded bg-gradient-to-r from-slate-100 to-slate-200 border border-slate-300">
+                <span className="text-xs font-mono text-[var(--primary)] font-bold px-2 py-0.5 rounded bg-[var(--secondary)] border border-[var(--border)]">
                   {s.code}
                 </span>
-                <span className="text-xs text-slate-500">{s.totalOrders} Orders Completed</span>
+                <span className="text-xs text-[var(--muted-foreground)]">{s.totalOrders} Orders Completed</span>
               </div>
 
               <div>
-                <h4 className="font-bold text-slate-900 text-base">{s.name}</h4>
-                <p className="text-xs text-slate-500">{s.category}</p>
+                <h4 className="font-bold text-[var(--foreground)] text-base">{s.name}</h4>
+                <p className="text-xs text-[var(--muted-foreground)]">{s.category}</p>
               </div>
 
-              <div className="pt-2 border-t border-slate-200 flex flex-wrap gap-4 text-xs text-slate-600">
+              <div className="pt-2 border-t border-[var(--border)] flex flex-wrap gap-4 text-xs text-[var(--muted-foreground)]">
                 <div className="flex items-center gap-1.5">
-                  <Mail className="h-3.5 w-3.5 text-purple-400" /> {s.contactEmail}
+                  <Mail className="h-3.5 w-3.5 text-[var(--primary)]" /> {s.contactEmail}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Phone className="h-3.5 w-3.5 text-emerald-400" /> {s.phone}
+                  <Phone className="h-3.5 w-3.5 text-[var(--success)]" /> {s.phone}
                 </div>
               </div>
             </div>
@@ -161,16 +161,16 @@ export const SuppliersPage: React.FC = () => {
       </div>
 
       {/* Purchase Orders Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-lg">
-        <div className="p-4 border-b border-slate-200 font-semibold text-slate-900 text-sm flex items-center gap-2 bg-slate-50">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-            <ShoppingBag className="h-4 w-4 text-white" />
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden panel-effect">
+        <div className="p-4 border-b border-[var(--border)] font-semibold text-[var(--foreground)] text-sm flex items-center gap-2 bg-[var(--muted)]">
+          <div className="p-1.5 rounded-lg bg-[var(--primary)] glow-effect">
+            <ShoppingBag className="h-4 w-4 text-[var(--primary-foreground)]" />
           </div>
           Purchase Orders Requisitions ({purchaseOrders.length})
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase text-slate-500 tracking-wider">
+          <table className="w-full text-left text-sm text-[var(--foreground)]">
+            <thead className="bg-[var(--muted)] border-b border-[var(--border)] text-xs font-semibold uppercase text-[var(--muted-foreground)] tracking-wider">
               <tr>
                 <th className="px-6 py-4">PO Number</th>
                 <th className="px-6 py-4">Supplier</th>
@@ -181,18 +181,18 @@ export const SuppliersPage: React.FC = () => {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-[var(--border)]">
               {purchaseOrders.map((po) => (
-                <tr key={po.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-xs font-bold text-blue-600">{po.poNumber}</td>
-                  <td className="px-6 py-4 font-semibold text-slate-900">{po.supplierName}</td>
-                  <td className="px-6 py-4 text-xs text-slate-600">{po.items}</td>
-                  <td className="px-6 py-4 font-bold text-slate-900">₹{po.totalAmount.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-xs text-slate-500">{po.expectedDate}</td>
+                <tr key={po.id} className="hover:bg-[var(--muted)] transition-colors">
+                  <td className="px-6 py-4 font-mono text-xs font-bold text-[var(--primary)]">{po.poNumber}</td>
+                  <td className="px-6 py-4 font-semibold text-[var(--foreground)]">{po.supplierName}</td>
+                  <td className="px-6 py-4 text-xs text-[var(--muted-foreground)]">{po.items}</td>
+                  <td className="px-6 py-4 font-bold text-[var(--foreground)]">₹{po.totalAmount.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-xs text-[var(--muted-foreground)]">{po.expectedDate}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-block text-[11px] font-bold px-2.5 py-1 rounded-full uppercase border ${
-                      po.status === 'RECEIVED' ? 'bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-600 border-emerald-500/30' :
-                      po.status === 'ORDERED' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-600 border-blue-500/30' : 'bg-gradient-to-r from-slate-200 to-slate-100 text-slate-600 border-slate-300'
+                      po.status === 'RECEIVED' ? 'bg-[var(--success)]/20 text-[var(--success-foreground)] border-[var(--success)]/30' :
+                      po.status === 'ORDERED' ? 'bg-[var(--info)]/20 text-[var(--info-foreground)] border-[var(--info)]/30' : 'bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)]'
                     }`}>
                       {po.status}
                     </span>
@@ -201,7 +201,7 @@ export const SuppliersPage: React.FC = () => {
                     {po.status !== 'RECEIVED' && (
                       <button
                         onClick={() => markReceived(po.id)}
-                        className="px-3 py-1 rounded bg-gradient-to-r from-slate-100 to-slate-200 hover:from-emerald-600 hover:to-green-500 text-slate-700 hover:text-white text-xs font-medium border border-slate-300 transition-all shadow-md"
+                        className="px-3 py-1 rounded bg-[var(--secondary)] hover:bg-[var(--success)] text-[var(--secondary-foreground)] hover:text-[var(--success-foreground)] text-xs font-medium border border-[var(--border)] transition-all"
                       >
                         Mark Received
                       </button>
@@ -216,27 +216,27 @@ export const SuppliersPage: React.FC = () => {
 
       {/* MODAL: CREATE PURCHASE ORDER */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-                  <ShoppingBag className="h-5 w-5 text-white" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4 panel-effect">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-[var(--primary)] glow-effect">
+                  <ShoppingBag className="h-5 w-5 text-[var(--primary-foreground)]" />
                 </div>
                 Create Purchase Requisition Order
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleCreatePO} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Supplier Vendor</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Supplier Vendor</label>
                 <select
                   value={selectedSupplier}
                   onChange={(e) => setSelectedSupplier(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                 >
                   {suppliers.map((s) => (
                     <option key={s.id} value={s.name}>{s.name} ({s.code})</option>
@@ -245,38 +245,38 @@ export const SuppliersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Requisition Item Description *</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Requisition Item Description *</label>
                 <input
                   type="text"
                   placeholder="e.g. 100 kg Industrial Grade Aluminum Billets 6061"
                   value={orderItems}
                   onChange={(e) => setOrderItems(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Total Estimated Amount (₹ / $)</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Total Estimated Amount (₹ / $)</label>
                 <input
                   type="number"
                   value={totalAmount}
                   onChange={(e) => setTotalAmount(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 text-xs font-medium border border-slate-300"
+                  className="px-4 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-xs font-medium border border-[var(--border)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-medium shadow-lg shadow-blue-500/30"
+                  className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] text-xs font-medium glow-effect"
                 >
                   Issue Purchase Order
                 </button>

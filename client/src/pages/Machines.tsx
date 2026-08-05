@@ -62,47 +62,47 @@ export const MachinesPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Workstations & Machine Maintenance</h2>
-        <p className="text-sm text-slate-500">Monitor equipment status, assigned production orders, and preventative maintenance schedules.</p>
+        <h2 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Workstations & Machine Maintenance</h2>
+        <p className="text-sm text-[var(--muted-foreground)]">Monitor equipment status, assigned production orders, and preventative maintenance schedules.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {machines.map((m) => {
           const isOverdue = m.status === 'MAINTENANCE_DUE';
           return (
-            <div key={m.id} className="bg-white border border-slate-200 rounded-xl p-5 space-y-4 shadow-lg hover:border-slate-300 transition-all">
+            <div key={m.id} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-4 panel-effect hover:border-[var(--primary)] transition-all">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-blue-600 font-bold px-2 py-1 rounded bg-gradient-to-r from-slate-100 to-slate-200 border border-slate-300">
+                <span className="text-xs font-mono text-[var(--primary)] font-bold px-2 py-1 rounded bg-[var(--secondary)] border border-[var(--border)]">
                   {m.id}
                 </span>
                 <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border ${
                   isOverdue 
-                    ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30' 
-                    : 'bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-400 border-emerald-500/30'
+                    ? 'bg-[var(--warning)]/20 text-[var(--warning-foreground)] border-[var(--warning)]/30' 
+                    : 'bg-[var(--success)]/20 text-[var(--success-foreground)] border-[var(--success)]/30'
                 }`}>
                   {m.status.replace('_', ' ')}
                 </span>
               </div>
 
               <div>
-                <h3 className="font-bold text-slate-900 text-base leading-snug">{m.name}</h3>
-                <p className="text-xs text-slate-500 mt-1">{m.model} • {m.department}</p>
+                <h3 className="font-bold text-[var(--foreground)] text-base leading-snug">{m.name}</h3>
+                <p className="text-xs text-[var(--muted-foreground)] mt-1">{m.model} • {m.department}</p>
               </div>
 
-              <div className="pt-3 border-t border-slate-200 space-y-2 text-xs text-slate-600">
+              <div className="pt-3 border-t border-[var(--border)] space-y-2 text-xs text-[var(--muted-foreground)]">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400 flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5 text-purple-400" /> Preventative Maintenance:
+                  <span className="text-[var(--muted-foreground)] flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5 text-[var(--primary)]" /> Preventative Maintenance:
                   </span>
-                  <span className={`font-semibold ${isOverdue ? 'text-amber-600' : 'text-slate-900'}`}>
+                  <span className={`font-semibold ${isOverdue ? 'text-[var(--warning)]' : 'text-[var(--foreground)]'}`}>
                     {m.maintenanceDue}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400 flex items-center gap-1">
-                    <Cpu className="h-3.5 w-3.5 text-blue-400" /> Active Production Order:
+                  <span className="text-[var(--muted-foreground)] flex items-center gap-1">
+                    <Cpu className="h-3.5 w-3.5 text-[var(--primary)]" /> Active Production Order:
                   </span>
-                  <span className="font-mono text-blue-600 font-medium">{m.assignedOrder}</span>
+                  <span className="font-mono text-[var(--primary)] font-medium">{m.assignedOrder}</span>
                 </div>
               </div>
 
@@ -111,7 +111,7 @@ export const MachinesPage: React.FC = () => {
                   setSelectedMachine(m);
                   setIsModalOpen(true);
                 }}
-                className="w-full py-2 rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 hover:from-blue-600 hover:to-cyan-500 text-slate-700 hover:text-white text-xs font-medium border border-slate-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                className="w-full py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--primary)] text-[var(--secondary-foreground)] hover:text-[var(--primary-foreground)] text-xs font-medium border border-[var(--border)] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Wrench className="h-3.5 w-3.5" />
                 Log Maintenance Activity
@@ -123,61 +123,61 @@ export const MachinesPage: React.FC = () => {
 
       {/* MODAL: LOG MAINTENANCE ACTIVITY */}
       {isModalOpen && selectedMachine && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-md p-6 shadow-2xl space-y-4 panel-effect">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Log Maintenance Record</h3>
-                <p className="text-xs text-blue-600 font-mono mt-0.5">{selectedMachine.name} ({selectedMachine.id})</p>
+                <h3 className="text-base font-bold text-[var(--foreground)]">Log Maintenance Record</h3>
+                <p className="text-xs text-[var(--primary)] font-mono mt-0.5">{selectedMachine.name} ({selectedMachine.id})</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleResolveMaintenance} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Action Taken & Maintenance Remarks *</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Action Taken & Maintenance Remarks *</label>
                 <textarea
                   rows={3}
                   placeholder="e.g. Replaced hydraulic filter seals, refilled lubricant fluid, and recalibrated axis alignment."
                   value={actionTaken}
                   onChange={(e) => setActionTaken(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Maintenance Cost (₹ / $)</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Maintenance Cost (₹ / $)</label>
                 <input
                   type="number"
                   value={maintenanceCost}
                   onChange={(e) => setMaintenanceCost(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
                 />
               </div>
 
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1 text-slate-600">
+              <div className="p-3 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-xs space-y-1 text-[var(--muted-foreground)]">
                 <div className="flex justify-between">
                   <span>Updated Status:</span>
-                  <span className="font-bold text-emerald-600 flex items-center gap-1">
+                  <span className="font-bold text-[var(--success)] flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" /> OPERATIONAL
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 text-xs font-medium border border-slate-300"
+                  className="px-4 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-xs font-medium border border-[var(--border)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-medium shadow-lg shadow-blue-500/30"
+                  className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] text-xs font-medium glow-effect"
                 >
                   Complete & Set Operational
                 </button>

@@ -65,17 +65,17 @@ const DEMO_ORDERS: ProductionOrder[] = [
 
 // ── Column config ─────────────────────────────────────────────────────────────
 const COLUMNS: { label: string; status: OrderStatus; badgeBg: string; columnBg: string; nextStatus?: OrderStatus }[] = [
-  { label: 'Pending Approval', status: 'PENDING', badgeBg: 'bg-gradient-to-r from-slate-500 to-slate-400 text-white', columnBg: 'from-slate-50 to-slate-100 border-slate-200', nextStatus: 'IN_PROGRESS' },
-  { label: 'In Progress', status: 'IN_PROGRESS', badgeBg: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white', columnBg: 'from-blue-50 to-cyan-50 border-blue-200', nextStatus: 'INSPECTION' },
-  { label: 'Quality Inspection', status: 'INSPECTION', badgeBg: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white', columnBg: 'from-purple-50 to-pink-50 border-purple-200', nextStatus: 'COMPLETED' },
-  { label: 'Completed', status: 'COMPLETED', badgeBg: 'bg-gradient-to-r from-emerald-500 to-green-500 text-white', columnBg: 'from-emerald-50 to-green-50 border-emerald-200' },
+  { label: 'Pending Approval', status: 'PENDING', badgeBg: 'bg-[var(--muted)] text-[var(--muted-foreground)]', columnBg: 'bg-[var(--card)] border-[var(--border)]', nextStatus: 'IN_PROGRESS' },
+  { label: 'In Progress', status: 'IN_PROGRESS', badgeBg: 'bg-[var(--info)] text-[var(--info-foreground)]', columnBg: 'bg-[var(--card)] border-[var(--border)]', nextStatus: 'INSPECTION' },
+  { label: 'Quality Inspection', status: 'INSPECTION', badgeBg: 'bg-[var(--destructive)] text-[var(--destructive-foreground)]', columnBg: 'bg-[var(--card)] border-[var(--border)]', nextStatus: 'COMPLETED' },
+  { label: 'Completed', status: 'COMPLETED', badgeBg: 'bg-[var(--success)] text-[var(--success-foreground)]', columnBg: 'bg-[var(--card)] border-[var(--border)]' },
 ];
 
 const PRIORITY_CLASS: Record<string, string> = {
-  URGENT: 'bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border border-red-500/30',
-  HIGH: 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 border border-orange-500/30',
-  MEDIUM: 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-400 border border-amber-500/30',
-  LOW: 'bg-gradient-to-r from-slate-200 to-slate-100 text-slate-600 border border-slate-300',
+  URGENT: 'bg-[var(--destructive)]/20 text-[var(--destructive-foreground)] border border-[var(--destructive)]/30',
+  HIGH: 'bg-[var(--warning)]/20 text-[var(--warning-foreground)] border border-[var(--warning)]/30',
+  MEDIUM: 'bg-[var(--info)]/20 text-[var(--info-foreground)] border border-[var(--info)]/30',
+  LOW: 'bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]',
 };
 
 export const ProductionOrdersPage: React.FC = () => {
@@ -146,20 +146,20 @@ export const ProductionOrdersPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Production Order Pipeline</h2>
-          <p className="text-sm text-slate-500">Track order progress from scheduling, machining, quality checks, to completion.</p>
+          <h2 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">Production Order Pipeline</h2>
+          <p className="text-sm text-[var(--muted-foreground)]">Track order progress from scheduling, machining, quality checks, to completion.</p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => refetch()}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 text-slate-700 text-sm border border-slate-300 transition-all cursor-pointer shadow-md"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-sm border border-[var(--border)] transition-all cursor-pointer"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-medium text-sm shadow-lg shadow-blue-500/30 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] font-medium text-sm glow-effect transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Create Production Order
@@ -168,15 +168,15 @@ export const ProductionOrdersPage: React.FC = () => {
       </div>
 
       {isError && (
-        <div className="px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-600">
+        <div className="px-4 py-2.5 bg-[var(--warning)]/10 border border-[var(--warning)]/30 rounded-lg text-sm text-[var(--warning-foreground)]">
           Backend offline — showing demo data. Actions will update locally.
         </div>
       )}
 
       {/* Kanban Pipeline */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-24 gap-3 text-slate-500">
-          <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+        <div className="flex items-center justify-center py-24 gap-3 text-[var(--muted-foreground)]">
+          <Loader2 className="h-6 w-6 animate-spin text-[var(--primary)]" />
           <span className="text-sm">Loading production orders…</span>
         </div>
       ) : (
@@ -184,9 +184,9 @@ export const ProductionOrdersPage: React.FC = () => {
           {COLUMNS.map((col) => {
             const colOrders = orders.filter((o) => o.status === col.status);
             return (
-              <div key={col.status} className={`bg-gradient-to-br ${col.columnBg} border rounded-xl p-4 flex flex-col min-h-[500px] shadow-lg backdrop-blur-sm`}>
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
-                  <span className="text-sm font-semibold text-slate-900">{col.label}</span>
+              <div key={col.status} className={`${col.columnBg} border rounded-xl p-4 flex flex-col min-h-[500px] panel-effect`}>
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]">
+                  <span className="text-sm font-semibold text-[var(--foreground)]">{col.label}</span>
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${col.badgeBg}`}>
                     {colOrders.length}
                   </span>
@@ -194,42 +194,41 @@ export const ProductionOrdersPage: React.FC = () => {
 
                 <div className="space-y-4 flex-1">
                   {colOrders.length === 0 ? (
-                    <div className="h-32 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-xs text-slate-500">
+                    <div className="h-32 border-2 border-dashed border-[var(--border)] rounded-lg flex items-center justify-center text-xs text-[var(--muted-foreground)]">
                       No orders in this stage
                     </div>
                   ) : (
                     colOrders.map((order) => {
                       const pct = Math.round((order.completedQuantity / order.targetQuantity) * 100);
                       const progressColors: Record<string, string> = {
-                        PENDING: 'from-slate-500 to-slate-400',
-                        APPROVED: 'from-teal-500 to-teal-400',
-                        IN_PROGRESS: 'from-blue-500 to-cyan-500',
-                        INSPECTION: 'from-purple-500 to-pink-500',
-                        COMPLETED: 'from-emerald-500 to-green-500',
-                        CANCELLED: 'from-red-500 to-red-400',
+                        PENDING: 'from-[var(--muted)] to-[var(--muted-foreground)]',
+                        APPROVED: 'from-[var(--info)] to-[var(--info-foreground)]',
+                        IN_PROGRESS: 'from-[var(--primary)] to-[var(--primary-foreground)]',
+                        INSPECTION: 'from-[var(--destructive)] to-[var(--destructive-foreground)]',
+                        COMPLETED: 'from-[var(--success)] to-[var(--success-foreground)]',
                       };
                       return (
                         <div
                           key={order.id}
-                          className="p-4 rounded-lg bg-white border border-slate-200 space-y-3 shadow-md hover:border-slate-300 transition-all"
+                          className="p-4 rounded-lg bg-[var(--muted)] border border-[var(--border)] space-y-3 panel-effect hover:border-[var(--primary)] transition-all"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-mono text-blue-600 font-bold">{order.orderNumber}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase border ${PRIORITY_CLASS[order.priority] ?? 'bg-slate-100 text-slate-600'}`}>
+                            <span className="text-xs font-mono text-[var(--primary)] font-bold">{order.orderNumber}</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase border ${PRIORITY_CLASS[order.priority] ?? 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
                               {order.priority}
                             </span>
                           </div>
 
-                          <h4 className="text-sm font-semibold text-slate-900 leading-snug">{order.productName}</h4>
+                          <h4 className="text-sm font-semibold text-[var(--foreground)] leading-snug">{order.productName}</h4>
 
                           <div className="space-y-1.5 pt-2">
-                            <div className="flex justify-between text-xs text-slate-500">
+                            <div className="flex justify-between text-xs text-[var(--muted-foreground)]">
                               <span>Output Progress</span>
-                              <span className="font-semibold text-slate-900">
+                              <span className="font-semibold text-[var(--foreground)]">
                                 {order.completedQuantity} / {order.targetQuantity} units
                               </span>
                             </div>
-                            <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                            <div className="h-2 w-full bg-[var(--secondary)] rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${progressColors[col.status]}`}
                                 style={{ width: `${pct}%` }}
@@ -238,8 +237,8 @@ export const ProductionOrdersPage: React.FC = () => {
                           </div>
 
                           {order.machine && (
-                            <div className="pt-2 border-t border-slate-200 flex items-center gap-1.5 text-xs text-slate-500">
-                              <Cpu className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+                            <div className="pt-2 border-t border-[var(--border)] flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
+                              <Cpu className="h-3.5 w-3.5 text-[var(--primary)] shrink-0" />
                               <span className="truncate">{order.machine.name}</span>
                             </div>
                           )}
@@ -248,7 +247,7 @@ export const ProductionOrdersPage: React.FC = () => {
                             <button
                               onClick={() => advanceStatus(order.id, col.nextStatus!)}
                               disabled={statusMutation.isPending}
-                              className="w-full mt-2 py-1.5 px-2 rounded bg-gradient-to-r from-slate-100 to-slate-200 hover:from-blue-600 hover:to-cyan-500 text-slate-700 hover:text-white text-[11px] font-medium border border-slate-300 flex items-center justify-center gap-1 transition-all cursor-pointer disabled:opacity-50 shadow-md"
+                              className="w-full mt-2 py-1.5 px-2 rounded bg-[var(--secondary)] hover:bg-[var(--primary)] text-[var(--secondary-foreground)] hover:text-[var(--primary-foreground)] text-[11px] font-medium border border-[var(--border)] flex items-center justify-center gap-1 transition-all cursor-pointer disabled:opacity-50"
                             >
                               {statusMutation.isPending
                                 ? <Loader2 className="h-3 w-3 animate-spin" />
@@ -269,44 +268,44 @@ export const ProductionOrdersPage: React.FC = () => {
 
       {/* ── MODAL: CREATE PRODUCTION ORDER ────────────────────────────────── */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Factory className="h-5 w-5 text-blue-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl w-full max-w-lg p-6 shadow-2xl space-y-4 panel-effect">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
+                <Factory className="h-5 w-5 text-[var(--primary)]" />
                 Create New Production Order
               </h3>
-              <button onClick={() => setIsCreateModalOpen(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+              <button onClick={() => setIsCreateModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit(onCreateOrder)} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Product Name *</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Product Name *</label>
                 <input
                   {...register('productName')}
                   placeholder="e.g. Heavy Gearbox Housing Assembly"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
-                {errors.productName && <p className="text-xs text-red-400 mt-1">{errors.productName.message}</p>}
+                {errors.productName && <p className="text-xs text-[var(--destructive-foreground)] mt-1">{errors.productName.message}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Target Quantity</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Target Quantity</label>
                   <input
                     type="number"
                     {...register('targetQuantity')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   />
-                  {errors.targetQuantity && <p className="text-xs text-red-400 mt-1">{errors.targetQuantity.message}</p>}
+                  {errors.targetQuantity && <p className="text-xs text-[var(--destructive-foreground)] mt-1">{errors.targetQuantity.message}</p>}
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Priority</label>
+                  <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Priority</label>
                   <select
                     {...register('priority')}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -317,10 +316,10 @@ export const ProductionOrdersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Assigned Workstation</label>
+                <label className="text-xs font-medium text-[var(--foreground)] block mb-1">Assigned Workstation</label>
                 <select
                   {...register('machineId')}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] text-sm focus:outline-none focus:border-[var(--primary)]"
                 >
                   <option value="MAC-CNC-01">5-Axis CNC Milling Station A1</option>
                   <option value="MAC-LAT-04">Automated Precision Lathe L-04</option>
@@ -328,18 +327,18 @@ export const ProductionOrdersPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium cursor-pointer border border-slate-300"
+                  className="px-4 py-2 rounded-lg bg-[var(--secondary)] hover:bg-[var(--muted)] text-[var(--secondary-foreground)] text-xs font-medium cursor-pointer border border-[var(--border)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-medium shadow-lg shadow-blue-500/30 disabled:opacity-60 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[var(--primary-foreground)] text-xs font-medium glow-effect disabled:opacity-60 flex items-center gap-2 cursor-pointer"
                 >
                   {createMutation.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                   Create & Schedule Order
