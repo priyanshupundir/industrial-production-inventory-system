@@ -47,7 +47,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginSuccess }) => {
       }
       navigate('/');
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.error || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+      const errorMessage = err.message || err.response?.data?.error || 'Login failed. Please try again.';
+      setErrorMsg(errorMessage);
     } finally {
       setIsLoading(false);
     }
